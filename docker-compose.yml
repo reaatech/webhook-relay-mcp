@@ -1,0 +1,30 @@
+services:
+  webhook-relay:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: webhook-relay-mcp
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+      - DATABASE_PATH=/app/data/webhook-relay.db
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - LOG_LEVEL=info
+      - LOG_FORMAT=json
+      - EVENT_RETENTION_DAYS=30
+      - WEBHOOK_BASE_URL=http://localhost:3000
+    volumes:
+      - webhook-relay-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (r) => r.statusCode === 200 ? process.exit(0) : process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  webhook-relay-data:
