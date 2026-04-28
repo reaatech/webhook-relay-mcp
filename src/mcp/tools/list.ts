@@ -86,7 +86,8 @@ export const listTool = defineTool(
     } catch (error) {
       logger.error({ error, event: 'list_error' }, 'Failed to list subscriptions');
       throw new Error(
-        `Failed to list subscriptions: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to list subscriptions: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        { cause: error }
       );
     }
   }

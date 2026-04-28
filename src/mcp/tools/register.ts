@@ -97,7 +97,8 @@ export const registerTool = defineTool(
     } catch (error) {
       logger.error({ error, event: 'register_error' }, 'Failed to register webhook source');
       throw new Error(
-        `Failed to register webhook source: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to register webhook source: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        { cause: error }
       );
     }
   }

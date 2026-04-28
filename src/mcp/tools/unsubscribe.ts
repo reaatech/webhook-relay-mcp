@@ -55,7 +55,8 @@ export const unsubscribeTool = defineTool(
     } catch (error) {
       logger.error({ error, event: 'unsubscribe_error', subscriptionId }, 'Failed to unsubscribe');
       throw new Error(
-        `Failed to unsubscribe: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to unsubscribe: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        { cause: error }
       );
     }
   }

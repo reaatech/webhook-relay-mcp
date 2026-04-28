@@ -118,7 +118,9 @@ export const pollTool = defineTool(
       );
     } catch (error) {
       logger.error({ error, event: 'poll_error', subscriptionId }, 'Poll failed');
-      throw new Error(`Poll failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`Poll failed: ${error instanceof Error ? error.message : 'Unknown error'}`, {
+        cause: error,
+      });
     }
   }
 );
