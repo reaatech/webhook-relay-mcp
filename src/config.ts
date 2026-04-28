@@ -35,7 +35,7 @@ const raw = {
 const parsed = configSchema.safeParse(raw);
 
 if (!parsed.success) {
-  console.error('Invalid configuration:', parsed.error.format());
+  console.error('Invalid configuration:', JSON.stringify(parsed.error.issues, null, 2));
   process.exit(1);
 }
 
