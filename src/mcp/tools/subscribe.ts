@@ -77,7 +77,8 @@ export const subscribeTool = defineTool(
     } catch (error) {
       logger.error({ error, event: 'subscription_error' }, 'Failed to create subscription');
       throw new Error(
-        `Failed to create subscription: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to create subscription: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        { cause: error }
       );
     }
   }

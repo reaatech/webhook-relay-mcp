@@ -134,7 +134,8 @@ export const historyTool = defineTool(
     } catch (error) {
       logger.error({ error, event: 'history_error' }, 'History query failed');
       throw new Error(
-        `History query failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `History query failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        { cause: error }
       );
     }
   }
