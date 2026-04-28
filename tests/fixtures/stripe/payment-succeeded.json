@@ -1,0 +1,13 @@
+{
+  "id": "evt_test_123",
+  "type": "invoice.payment_succeeded",
+  "created": 1700000000,
+  "data": {
+    "object": {
+      "id": "in_test_123",
+      "customer": "cus_test_123",
+      "amount_due": 5000,
+      "currency": "usd"
+    }
+  }
+}

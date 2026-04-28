@@ -1,0 +1,12 @@
+{
+  "action": "completed",
+  "workflow_run": {
+    "id": 12345,
+    "workflow_id": 67890,
+    "status": "completed",
+    "conclusion": "success",
+    "head_branch": "main"
+  },
+  "repository": {"full_name": "test/repo"},
+  "sender": {"login": "testuser"}
+}
