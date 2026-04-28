@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const subscribeSchema = z.object({
   eventTypes: z.array(z.string().min(1)).min(1),
-  filters: z.record(z.unknown()).optional(),
+  filters: z.record(z.string(), z.unknown()).optional(),
   ttl: z.number().int().min(1).optional().default(3600),
 });
 
