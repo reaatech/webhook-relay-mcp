@@ -4,14 +4,7 @@
   "private": true,
   "description": "Enterprise-grade MCP server for webhook ingestion and event relay",
   "type": "module",
-  "keywords": [
-    "mcp",
-    "webhook",
-    "stripe",
-    "github",
-    "replicate",
-    "twilio"
-  ],
+  "keywords": ["mcp", "webhook", "stripe", "github", "replicate", "twilio"],
   "author": "Rick Somers <rick@reaatech.com> (https://reaatech.com)",
   "license": "MIT",
   "engines": {
