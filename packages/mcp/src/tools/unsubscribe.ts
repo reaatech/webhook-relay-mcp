@@ -1,6 +1,6 @@
-import { defineTool, type ToolInputSchema } from '../types.js';
-import { StorageService } from '@reaatech/webhook-relay-storage';
 import { logger } from '@reaatech/webhook-relay-core';
+import { StorageService } from '@reaatech/webhook-relay-storage';
+import { type ToolInputSchema, defineTool } from '../types.js';
 
 const inputSchema: ToolInputSchema = {
   type: 'object',
@@ -47,7 +47,7 @@ export const unsubscribeTool = defineTool(
                 message: 'Subscription has been cancelled. No more events will be delivered.',
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -56,8 +56,8 @@ export const unsubscribeTool = defineTool(
       logger.error({ error, event: 'unsubscribe_error', subscriptionId }, 'Failed to unsubscribe');
       throw new Error(
         `Failed to unsubscribe: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        { cause: error }
+        { cause: error },
       );
     }
-  }
+  },
 );

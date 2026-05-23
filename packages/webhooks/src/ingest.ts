@@ -1,14 +1,14 @@
-import { Router, type Response } from 'express';
-import type { WebhookRequest } from './types.js';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import { config } from '@reaatech/webhook-relay-core';
 import { logger } from '@reaatech/webhook-relay-core';
-import { StorageService } from '@reaatech/webhook-relay-storage';
-import { PollWaiterService } from '@reaatech/webhook-relay-storage';
-import { getWebhookSource } from './sources/index.js';
 import { decryptSecret } from '@reaatech/webhook-relay-core';
 import { SignatureVerificationError } from '@reaatech/webhook-relay-core';
+import { StorageService } from '@reaatech/webhook-relay-storage';
+import { PollWaiterService } from '@reaatech/webhook-relay-storage';
+import { type Response, Router } from 'express';
 import { rateLimit } from './middleware/rateLimit.js';
+import { getWebhookSource } from './sources/index.js';
+import type { WebhookRequest } from './types.js';
 
 const router: import('express').Router = Router();
 
@@ -16,7 +16,7 @@ router.use(
   rateLimit({
     windowMs: config.rateLimitWindowMs,
     maxRequests: config.rateLimitMaxRequests,
-  })
+  }),
 );
 
 router.post('/:name', async (req: WebhookRequest, res: Response) => {
@@ -30,7 +30,7 @@ router.post('/:name', async (req: WebhookRequest, res: Response) => {
       name,
       userAgent: req.get('user-agent') ?? 'unknown',
     },
-    'Webhook received'
+    'Webhook received',
   );
 
   try {
@@ -47,7 +47,7 @@ router.post('/:name', async (req: WebhookRequest, res: Response) => {
     if (!webhookSource) {
       logger.warn(
         { event: 'unknown_source_type', sourceType: sourceConfig.sourceType },
-        'Unknown webhook source type'
+        'Unknown webhook source type',
       );
       res.status(404).json({ error: 'Unknown webhook source type' });
       return;
@@ -67,7 +67,7 @@ router.post('/:name', async (req: WebhookRequest, res: Response) => {
           requestId,
           error: error instanceof Error ? error.message : 'Unknown error',
         },
-        'Signature validation failed'
+        'Signature validation failed',
       );
       res.status(401).json({ error: 'Invalid signature' });
       return;
@@ -111,7 +111,7 @@ router.post('/:name', async (req: WebhookRequest, res: Response) => {
         eventType: normalizedEvent.type,
         eventId: normalizedEvent.id,
       },
-      'Webhook processed successfully'
+      'Webhook processed successfully',
     );
 
     res.status(202).json({
@@ -126,7 +126,7 @@ router.post('/:name', async (req: WebhookRequest, res: Response) => {
         name,
         error: error instanceof Error ? error.message : 'Unknown error',
       },
-      'Error processing webhook'
+      'Error processing webhook',
     );
 
     res.status(500).json({ error: 'Internal server error' });

@@ -1,14 +1,14 @@
-import { describe, it, expect } from 'vitest';
+import crypto from 'node:crypto';
 import { TwilioWebhookSource } from '@reaatech/webhook-relay-webhooks';
 import type { WebhookRequest } from '@reaatech/webhook-relay-webhooks';
-import crypto from 'crypto';
+import { describe, expect, it } from 'vitest';
 
 describe('TwilioWebhookSource', () => {
   const source = new TwilioWebhookSource();
 
   function createReq(
     body: Record<string, unknown>,
-    headers: Record<string, string> = {}
+    headers: Record<string, string> = {},
   ): WebhookRequest {
     return {
       body,
@@ -22,7 +22,7 @@ describe('TwilioWebhookSource', () => {
   it('should throw on missing signature header', async () => {
     const req = createReq({});
     await expect(source.validateSignature(req, 'secret')).rejects.toThrow(
-      'Missing X-Twilio-Signature'
+      'Missing X-Twilio-Signature',
     );
   });
 
@@ -41,7 +41,7 @@ describe('TwilioWebhookSource', () => {
   it('should reject invalid signature', async () => {
     const req = createReq(
       { MessageSid: 'msg-1' },
-      { 'x-twilio-signature': crypto.randomBytes(20).toString('base64') }
+      { 'x-twilio-signature': crypto.randomBytes(20).toString('base64') },
     );
     const valid = await source.validateSignature(req, 'secret');
     expect(valid).toBe(false);

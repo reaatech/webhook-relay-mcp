@@ -3,7 +3,7 @@ import type { Tool } from '@modelcontextprotocol/sdk/types.js';
 export interface ToolHandler {
   definition: Tool;
   execute(
-    args: Record<string, unknown>
+    args: Record<string, unknown>,
   ): Promise<{ content: Array<{ type: string; text: string }> }>;
 }
 
@@ -28,8 +28,8 @@ export function defineTool(
   description: string,
   inputSchema: ToolInputSchema,
   execute: (
-    args: Record<string, unknown>
-  ) => Promise<{ content: Array<{ type: string; text: string }> }>
+    args: Record<string, unknown>,
+  ) => Promise<{ content: Array<{ type: string; text: string }> }>,
 ): ToolHandler {
   return {
     definition: {

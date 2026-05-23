@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import { StripeSignatureValidator } from '@reaatech/webhook-relay-webhooks';
+import { describe, expect, it } from 'vitest';
 
 describe('StripeSignatureValidator', () => {
   const validator = new StripeSignatureValidator();
@@ -28,7 +28,7 @@ describe('StripeSignatureValidator', () => {
     const signature = 'v1=abc123';
 
     await expect(validator.validate(payload, signature, secret)).rejects.toThrow(
-      'Invalid Stripe signature format'
+      'Invalid Stripe signature format',
     );
   });
 });

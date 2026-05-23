@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-import { startHttpServer } from './server.js';
-import { startMCPServer } from '@reaatech/webhook-relay-mcp';
-import { StorageService, DatabaseService } from '@reaatech/webhook-relay-storage';
 import { logger } from '@reaatech/webhook-relay-core';
 import { config } from '@reaatech/webhook-relay-core';
+import { startMCPServer } from '@reaatech/webhook-relay-mcp';
+import { DatabaseService, StorageService } from '@reaatech/webhook-relay-storage';
+import { startHttpServer } from './server.js';
 
 function handleShutdown(signal: string) {
   logger.info({ signal }, 'Received shutdown signal');

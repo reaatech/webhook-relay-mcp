@@ -1,8 +1,8 @@
 import { DatabaseService } from './database.js';
 import { MigrationService } from './migrations.js';
 import { EventRepository } from './repositories/events.js';
-import { SubscriptionRepository } from './repositories/subscriptions.js';
 import { SourceRepository } from './repositories/sources.js';
+import { SubscriptionRepository } from './repositories/subscriptions.js';
 
 export class StorageService {
   private static instance: StorageService;

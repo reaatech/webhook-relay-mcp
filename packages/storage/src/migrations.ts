@@ -1,6 +1,6 @@
-import type Database from 'better-sqlite3';
 import { logger } from '@reaatech/webhook-relay-core';
-import { SCHEMA_VERSION, MIGRATIONS } from './schema.js';
+import type Database from 'better-sqlite3';
+import { MIGRATIONS, SCHEMA_VERSION } from './schema.js';
 
 export const MigrationService = {
   run(db: Database.Database): void {
@@ -9,7 +9,7 @@ export const MigrationService = {
     if (currentVersion >= SCHEMA_VERSION) {
       logger.info(
         { currentVersion, targetVersion: SCHEMA_VERSION },
-        'Database schema is up to date'
+        'Database schema is up to date',
       );
       return;
     }
@@ -28,7 +28,7 @@ export const MigrationService = {
         db.exec(sql);
       }
       db.prepare(
-        "INSERT INTO schema_migrations (version, applied_at) VALUES (?, datetime('now'))"
+        "INSERT INTO schema_migrations (version, applied_at) VALUES (?, datetime('now'))",
       ).run(version);
       logger.info({ version }, `Migration ${version} applied successfully`);
     }

@@ -1,6 +1,6 @@
-import { DatabaseService } from '../database.js';
 import { config } from '@reaatech/webhook-relay-core';
 import { logger } from '@reaatech/webhook-relay-core';
+import { DatabaseService } from '../database.js';
 
 const DEFAULT_INTERVAL_MS = 60 * 60 * 1000; // 1 hour
 
@@ -52,7 +52,7 @@ export class CleanupService {
         .prepare(
           `DELETE FROM subscription_events WHERE event_id IN (
           SELECT id FROM events WHERE received_at < ?
-        )`
+        )`,
         )
         .run(cutoffIso);
 
@@ -69,7 +69,7 @@ export class CleanupService {
           cutoffDate: cutoffIso,
           durationMs,
         },
-        'Cleanup completed'
+        'Cleanup completed',
       );
 
       return {

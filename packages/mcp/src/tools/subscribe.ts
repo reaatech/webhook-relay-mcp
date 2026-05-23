@@ -1,6 +1,6 @@
-import { defineTool, type ToolInputSchema } from '../types.js';
-import { StorageService } from '@reaatech/webhook-relay-storage';
 import { logger, subscribeSchema } from '@reaatech/webhook-relay-core';
+import { StorageService } from '@reaatech/webhook-relay-storage';
+import { type ToolInputSchema, defineTool } from '../types.js';
 
 const inputSchema: ToolInputSchema = {
   type: 'object',
@@ -53,7 +53,7 @@ export const subscribeTool = defineTool(
           eventTypes,
           expiresAt,
         },
-        'Subscription created'
+        'Subscription created',
       );
 
       return {
@@ -68,7 +68,7 @@ export const subscribeTool = defineTool(
                 message: `Subscribed to ${eventTypes.length} event type(s). Use webhooks.poll with this subscriptionId to receive events.`,
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -77,8 +77,8 @@ export const subscribeTool = defineTool(
       logger.error({ error, event: 'subscription_error' }, 'Failed to create subscription');
       throw new Error(
         `Failed to create subscription: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        { cause: error }
+        { cause: error },
       );
     }
-  }
+  },
 );

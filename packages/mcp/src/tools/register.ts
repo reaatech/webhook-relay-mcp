@@ -1,6 +1,6 @@
-import { defineTool, type ToolInputSchema } from '../types.js';
+import { config, encryptSecret, logger, registerSourceSchema } from '@reaatech/webhook-relay-core';
 import { StorageService } from '@reaatech/webhook-relay-storage';
-import { logger, config, encryptSecret, registerSourceSchema } from '@reaatech/webhook-relay-core';
+import { type ToolInputSchema, defineTool } from '../types.js';
 
 const inputSchema: ToolInputSchema = {
   type: 'object',
@@ -66,7 +66,7 @@ export const registerTool = defineTool(
           sourceType: source.sourceType,
           endpointUrl: source.endpointUrl,
         },
-        'Webhook source registered'
+        'Webhook source registered',
       );
 
       return {
@@ -86,7 +86,7 @@ export const registerTool = defineTool(
                 ],
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -95,8 +95,8 @@ export const registerTool = defineTool(
       logger.error({ error, event: 'register_error' }, 'Failed to register webhook source');
       throw new Error(
         `Failed to register webhook source: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        { cause: error }
+        { cause: error },
       );
     }
-  }
+  },
 );

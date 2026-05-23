@@ -1,5 +1,5 @@
 import { ulid } from 'ulid';
-import type { WebhookSource, NormalizedWebhookEvent, WebhookRequest } from '../types.js';
+import type { NormalizedWebhookEvent, WebhookRequest, WebhookSource } from '../types.js';
 import { StripeSignatureValidator } from '../validators/base.js';
 
 interface StripeEvent {
@@ -69,7 +69,7 @@ export class StripeWebhookSource implements WebhookSource {
         webhookId: stripeEvent.id,
         apiVersion: stripeEvent.api_version,
         attemptNumber: req.headers['stripe-notification-attempt']
-          ? parseInt(req.headers['stripe-notification-attempt'] as string, 10)
+          ? Number.parseInt(req.headers['stripe-notification-attempt'] as string, 10)
           : 1,
       },
     };

@@ -1,7 +1,7 @@
-import type Database from 'better-sqlite3';
-import { BaseRepository, type ListOptions } from './base.js';
-import { ulid } from 'ulid';
 import { matchEventType } from '@reaatech/webhook-relay-core';
+import type Database from 'better-sqlite3';
+import { ulid } from 'ulid';
+import { BaseRepository, type ListOptions } from './base.js';
 
 export interface SubscriptionEntity {
   id: string;
@@ -34,7 +34,7 @@ export class SubscriptionRepository extends BaseRepository<SubscriptionEntity> {
       createdAt,
       entity.expiresAt ?? null,
       entity.isActive ? 1 : 0,
-      entity.lastPolledAt ?? null
+      entity.lastPolledAt ?? null,
     );
 
     return { ...entity, id, createdAt };
@@ -101,7 +101,7 @@ export class SubscriptionRepository extends BaseRepository<SubscriptionEntity> {
         `
         SELECT * FROM subscriptions
         WHERE is_active = 1 AND (expires_at IS NULL OR expires_at > datetime('now'))
-      `
+      `,
       )
       .all() as Record<string, unknown>[];
 
@@ -114,7 +114,7 @@ export class SubscriptionRepository extends BaseRepository<SubscriptionEntity> {
         `
         SELECT * FROM subscriptions
         WHERE is_active = 1 AND (expires_at IS NULL OR expires_at > datetime('now'))
-      `
+      `,
       )
       .all() as Record<string, unknown>[];
 

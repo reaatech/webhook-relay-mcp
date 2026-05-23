@@ -1,6 +1,6 @@
-import { defineTool, type ToolInputSchema } from '../types.js';
-import { StorageService } from '@reaatech/webhook-relay-storage';
 import { logger, matchEventType } from '@reaatech/webhook-relay-core';
+import { StorageService } from '@reaatech/webhook-relay-storage';
+import { type ToolInputSchema, defineTool } from '../types.js';
 
 const inputSchema: ToolInputSchema = {
   type: 'object',
@@ -45,8 +45,8 @@ export const listTool = defineTool(
       if (Array.isArray(eventTypes) && eventTypes.length > 0) {
         filtered = filtered.filter((sub) =>
           sub.eventTypes.some((pattern) =>
-            eventTypes.some((et: string) => matchEventType(pattern, et))
-          )
+            eventTypes.some((et: string) => matchEventType(pattern, et)),
+          ),
         );
       }
 
@@ -56,7 +56,7 @@ export const listTool = defineTool(
           count: filtered.length,
           activeOnly,
         },
-        'Listed subscriptions'
+        'Listed subscriptions',
       );
 
       return {
@@ -77,7 +77,7 @@ export const listTool = defineTool(
                 count: filtered.length,
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -86,8 +86,8 @@ export const listTool = defineTool(
       logger.error({ error, event: 'list_error' }, 'Failed to list subscriptions');
       throw new Error(
         `Failed to list subscriptions: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        { cause: error }
+        { cause: error },
       );
     }
-  }
+  },
 );

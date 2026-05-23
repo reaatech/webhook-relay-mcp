@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
 import { CleanupService } from '@reaatech/webhook-relay-storage';
-import { StorageService, DatabaseService } from '@reaatech/webhook-relay-storage';
+import { DatabaseService, StorageService } from '@reaatech/webhook-relay-storage';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('CleanupService', () => {
   beforeEach(async () => {
@@ -20,7 +20,7 @@ describe('CleanupService', () => {
       `
       INSERT INTO events (id, type, source, source_type, source_id, timestamp, received_at, data, raw_payload, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `
+    `,
     ).run(
       'evt_recent',
       'test.event',
@@ -31,7 +31,7 @@ describe('CleanupService', () => {
       now.toISOString(),
       '{}',
       '{}',
-      now.toISOString()
+      now.toISOString(),
     );
 
     // Insert an old event (40 days ago)
@@ -41,7 +41,7 @@ describe('CleanupService', () => {
       `
       INSERT INTO events (id, type, source, source_type, source_id, timestamp, received_at, data, raw_payload, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `
+    `,
     ).run(
       'evt_old',
       'test.event',
@@ -52,7 +52,7 @@ describe('CleanupService', () => {
       oldDate.toISOString(),
       '{}',
       '{}',
-      oldDate.toISOString()
+      oldDate.toISOString(),
     );
 
     const cleanup = new CleanupService();
@@ -73,7 +73,7 @@ describe('CleanupService', () => {
       `
       INSERT INTO events (id, type, source, source_type, source_id, timestamp, received_at, data, raw_payload, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `
+    `,
     ).run(
       'evt_recent',
       'test.event',
@@ -84,7 +84,7 @@ describe('CleanupService', () => {
       now.toISOString(),
       '{}',
       '{}',
-      now.toISOString()
+      now.toISOString(),
     );
 
     const cleanup = new CleanupService();

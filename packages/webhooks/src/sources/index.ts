@@ -1,9 +1,9 @@
 import type { WebhookSource } from '../types.js';
-import { StripeWebhookSource } from './stripe.js';
+import { GenericWebhookSource } from './generic.js';
 import { GitHubWebhookSource } from './github.js';
 import { ReplicateWebhookSource } from './replicate.js';
+import { StripeWebhookSource } from './stripe.js';
 import { TwilioWebhookSource } from './twilio.js';
-import { GenericWebhookSource } from './generic.js';
 
 export const webhookSources: Record<string, new () => WebhookSource> = {
   stripe: StripeWebhookSource,

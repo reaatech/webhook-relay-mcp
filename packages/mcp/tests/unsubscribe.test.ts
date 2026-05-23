@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
 import { unsubscribeTool } from '@reaatech/webhook-relay-mcp';
-import { StorageService, DatabaseService } from '@reaatech/webhook-relay-storage';
+import { DatabaseService, StorageService } from '@reaatech/webhook-relay-storage';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('webhooks.unsubscribe tool', () => {
   beforeEach(async () => {
@@ -28,13 +28,13 @@ describe('webhooks.unsubscribe tool', () => {
 
   it('should reject missing subscription', async () => {
     await expect(unsubscribeTool.execute({ subscriptionId: 'non-existent-id' })).rejects.toThrow(
-      'not found'
+      'not found',
     );
   });
 
   it('should reject non-string subscriptionId', async () => {
     await expect(unsubscribeTool.execute({ subscriptionId: 123 })).rejects.toThrow(
-      'subscriptionId must be a string'
+      'subscriptionId must be a string',
     );
   });
 });

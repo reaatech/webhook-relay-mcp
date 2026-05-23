@@ -1,6 +1,8 @@
-import { describe, it, expect } from 'vitest';
 import { ReplicateWebhookSource } from '@reaatech/webhook-relay-webhooks';
-import predictionCompletedFixture from '../../fixtures/replicate/prediction-completed.json' with { type: 'json' };
+import { describe, expect, it } from 'vitest';
+import predictionCompletedFixture from '../../fixtures/replicate/prediction-completed.json' with {
+  type: 'json',
+};
 
 describe('ReplicateWebhookSource', () => {
   const source = new ReplicateWebhookSource();
@@ -41,7 +43,7 @@ describe('ReplicateWebhookSource', () => {
     it('should reject request without signature header', async () => {
       const req = createMockRequest(predictionCompletedFixture);
       await expect(source.validateSignature(req, 'any-secret')).rejects.toThrow(
-        'Missing webhook-secret header'
+        'Missing webhook-secret header',
       );
     });
   });

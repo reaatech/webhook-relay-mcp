@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
 import { pollTool } from '@reaatech/webhook-relay-mcp';
-import { StorageService, DatabaseService } from '@reaatech/webhook-relay-storage';
+import { DatabaseService, StorageService } from '@reaatech/webhook-relay-storage';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('webhooks.poll tool', () => {
   beforeEach(async () => {
@@ -52,7 +52,7 @@ describe('webhooks.poll tool', () => {
 
   it('should reject non-existent subscription', async () => {
     await expect(pollTool.execute({ subscriptionId: 'non-existent', timeout: 1 })).rejects.toThrow(
-      'not found'
+      'not found',
     );
   });
 
@@ -64,7 +64,7 @@ describe('webhooks.poll tool', () => {
     });
 
     await expect(pollTool.execute({ subscriptionId: sub.id, timeout: 1 })).rejects.toThrow(
-      'not active'
+      'not active',
     );
   });
 
@@ -77,7 +77,7 @@ describe('webhooks.poll tool', () => {
     });
 
     await expect(pollTool.execute({ subscriptionId: sub.id, timeout: 1 })).rejects.toThrow(
-      'expired'
+      'expired',
     );
   });
 

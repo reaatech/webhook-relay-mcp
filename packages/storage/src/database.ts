@@ -1,8 +1,8 @@
-import Database from 'better-sqlite3';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { logger } from '@reaatech/webhook-relay-core';
 import { config } from '@reaatech/webhook-relay-core';
+import Database from 'better-sqlite3';
 
 export class DatabaseService {
   private static instance: DatabaseService;

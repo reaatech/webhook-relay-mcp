@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import request from 'supertest';
-import { createApp } from '../../src/server.js';
 import { StorageService } from '@reaatech/webhook-relay-storage';
+import request from 'supertest';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { createApp } from '../../src/server.js';
 
 describe('Health Endpoint', () => {
   const app = createApp();

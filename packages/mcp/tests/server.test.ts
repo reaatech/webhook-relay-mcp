@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
 import { MCPServer, defineTool } from '@reaatech/webhook-relay-mcp';
+import { describe, expect, it } from 'vitest';
 
 describe('MCPServer', () => {
   it('should register a tool', () => {
@@ -10,7 +10,7 @@ describe('MCPServer', () => {
       { type: 'object', properties: {} },
       async () => ({
         content: [{ type: 'text', text: 'ok' }],
-      })
+      }),
     );
 
     server.registerTool(tool);
@@ -25,7 +25,7 @@ describe('MCPServer', () => {
       { type: 'object', properties: {} },
       async () => ({
         content: [{ type: 'text', text: 'ok' }],
-      })
+      }),
     );
     server.registerTool(tool);
 
@@ -58,7 +58,7 @@ describe('MCPServer', () => {
       { type: 'object', properties: {} },
       async () => ({
         content: [{ type: 'text', text: 'hello' }],
-      })
+      }),
     );
     server.registerTool(tool);
 
@@ -103,7 +103,7 @@ describe('MCPServer', () => {
         id: 3,
         method: 'tools/call',
         params: { name: 'unknown.tool', arguments: {} },
-      })
+      }),
     ).rejects.toThrow('Unknown tool');
   });
 
@@ -115,7 +115,7 @@ describe('MCPServer', () => {
       { type: 'object', properties: {} },
       async () => {
         throw new Error('Tool failed');
-      }
+      },
     );
     server.registerTool(tool);
 
@@ -136,7 +136,7 @@ describe('MCPServer', () => {
         id: 4,
         method: 'tools/call',
         params: { name: 'test.error', arguments: {} },
-      })
+      }),
     ).rejects.toThrow('Tool failed');
   });
 });

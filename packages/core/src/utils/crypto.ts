@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import { config } from '../config.js';
 
 const ALGORITHM = 'aes-256-gcm';
@@ -26,7 +26,7 @@ export function decryptSecret(encrypted: string): string {
   if (parts.length !== 3) {
     throw new Error(
       'Decryption failed: value is not in encrypted format. ' +
-        'Re-encrypt the secret or check ENCRYPTION_KEY.'
+        'Re-encrypt the secret or check ENCRYPTION_KEY.',
     );
   }
 

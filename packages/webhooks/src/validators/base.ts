@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 
 export interface SignatureValidator {
   validate(payload: Buffer, signature: string, secret: string): Promise<boolean>;
@@ -14,7 +14,7 @@ function safeTimingEqual(a: Buffer, b: Buffer): boolean {
 export class HMACSignatureValidator implements SignatureValidator {
   constructor(
     private algorithm: 'sha256' | 'sha1' = 'sha256',
-    private prefix: string = ''
+    private prefix = '',
   ) {}
 
   async validate(payload: Buffer, signature: string, secret: string): Promise<boolean> {
@@ -24,7 +24,7 @@ export class HMACSignatureValidator implements SignatureValidator {
 
     return safeTimingEqual(
       Buffer.from(cleanSignature, 'hex'),
-      Buffer.from(expectedSignature, 'hex')
+      Buffer.from(expectedSignature, 'hex'),
     );
   }
 
@@ -45,7 +45,7 @@ export class StripeSignatureValidator implements SignatureValidator {
       throw new Error('Invalid Stripe signature format');
     }
 
-    const timestamp = parseInt(timestampPart.substring(2), 10);
+    const timestamp = Number.parseInt(timestampPart.substring(2), 10);
     const signedPayload = `${timestamp}.${payload.toString()}`;
 
     const now = Math.floor(Date.now() / 1000);
@@ -62,7 +62,7 @@ export class StripeSignatureValidator implements SignatureValidator {
 
     return safeTimingEqual(
       Buffer.from(providedSignature, 'hex'),
-      Buffer.from(expectedSignature, 'hex')
+      Buffer.from(expectedSignature, 'hex'),
     );
   }
 }

@@ -1,5 +1,5 @@
-import Database from 'better-sqlite3';
 import { MigrationService } from '@reaatech/webhook-relay-storage';
+import Database from 'better-sqlite3';
 
 export function createTestDatabase(): Database.Database {
   const db = new Database(':memory:');

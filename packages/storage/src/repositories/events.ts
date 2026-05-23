@@ -1,6 +1,6 @@
 import type Database from 'better-sqlite3';
-import { BaseRepository, type ListOptions } from './base.js';
 import { ulid } from 'ulid';
+import { BaseRepository, type ListOptions } from './base.js';
 
 export interface EventEntity {
   id: string;
@@ -60,7 +60,7 @@ export class EventRepository extends BaseRepository<EventEntity> {
       this.toJSON(entity.rawPayload),
       entity.metadata ? this.toJSON(entity.metadata) : null,
       entity.processed ? 1 : 0,
-      createdAt
+      createdAt,
     );
 
     return { ...entity, id, createdAt, correlationId: entity.correlationId };

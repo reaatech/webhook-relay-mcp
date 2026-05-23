@@ -3,8 +3,8 @@
   "ref": "refs/heads/main",
   "before": "abc123",
   "after": "def456",
-  "commits": [{"id": "commit1"}],
-  "pusher": {"name": "testuser"},
-  "repository": {"full_name": "test/repo"},
-  "sender": {"login": "testuser"}
+  "commits": [{ "id": "commit1" }],
+  "pusher": { "name": "testuser" },
+  "repository": { "full_name": "test/repo" },
+  "sender": { "login": "testuser" }
 }

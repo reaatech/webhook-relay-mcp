@@ -1,10 +1,10 @@
 import type { MCPServer } from '../server.js';
-import { subscribeTool } from './subscribe.js';
-import { pollTool } from './poll.js';
 import { historyTool } from './history.js';
-import { registerTool } from './register.js';
-import { unsubscribeTool } from './unsubscribe.js';
 import { listTool } from './list.js';
+import { pollTool } from './poll.js';
+import { registerTool } from './register.js';
+import { subscribeTool } from './subscribe.js';
+import { unsubscribeTool } from './unsubscribe.js';
 
 export function registerAllTools(server: MCPServer): void {
   server.registerTool(subscribeTool);

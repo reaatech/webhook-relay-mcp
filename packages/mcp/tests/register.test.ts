@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
 import { registerTool } from '@reaatech/webhook-relay-mcp';
-import { StorageService, DatabaseService } from '@reaatech/webhook-relay-storage';
+import { DatabaseService, StorageService } from '@reaatech/webhook-relay-storage';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('webhooks.register tool', () => {
   beforeEach(async () => {
@@ -40,7 +40,7 @@ describe('webhooks.register tool', () => {
         name: 'stripe-short',
         sourceType: 'stripe',
         signingSecret: 'short',
-      })
+      }),
     ).rejects.toThrow();
   });
 
@@ -60,7 +60,7 @@ describe('webhooks.register tool', () => {
         name: 'stripe-dup',
         sourceType: 'stripe',
         signingSecret: 'whsec_test_secret_long_enough',
-      })
+      }),
     ).rejects.toThrow('already exists');
   });
 

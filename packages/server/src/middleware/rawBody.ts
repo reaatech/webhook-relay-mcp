@@ -1,10 +1,10 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import getRawBody from 'raw-body';
 
 export async function rawBodyMiddleware(
   req: Request,
   _res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   if (!req.path.startsWith('/webhooks/')) {
     return next();

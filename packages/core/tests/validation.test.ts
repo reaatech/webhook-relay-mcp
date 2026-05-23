@@ -1,10 +1,10 @@
-import { describe, it, expect } from 'vitest';
 import {
-  subscribeSchema,
-  pollSchema,
   historySchema,
+  pollSchema,
   registerSourceSchema,
+  subscribeSchema,
 } from '@reaatech/webhook-relay-core';
+import { describe, expect, it } from 'vitest';
 
 describe('validation schemas', () => {
   describe('subscribeSchema', () => {

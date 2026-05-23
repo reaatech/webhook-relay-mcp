@@ -7,13 +7,10 @@ RUN corepack enable && corepack prepare pnpm@10.22.0 --activate
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json .npmrc ./
-COPY packages/*/package.json ./packages/
+COPY . .
 
 RUN pnpm install --frozen-lockfile
 
-COPY packages/ ./packages/
-COPY . .
 RUN pnpm build
 
 # Production stage

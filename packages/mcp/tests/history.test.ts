@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
 import { historyTool } from '@reaatech/webhook-relay-mcp';
-import { StorageService, DatabaseService } from '@reaatech/webhook-relay-storage';
+import { DatabaseService, StorageService } from '@reaatech/webhook-relay-storage';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('webhooks.history tool', () => {
   beforeEach(async () => {
@@ -69,7 +69,7 @@ describe('webhooks.history tool', () => {
 
   it('should reject invalid cursor', async () => {
     await expect(historyTool.execute({ cursor: 'invalid-cursor' })).rejects.toThrow(
-      'Invalid cursor format'
+      'Invalid cursor format',
     );
   });
 

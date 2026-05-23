@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { encryptSecret, decryptSecret } from '@reaatech/webhook-relay-core';
+import { decryptSecret, encryptSecret } from '@reaatech/webhook-relay-core';
+import { describe, expect, it } from 'vitest';
 
 describe('crypto utility', () => {
   describe('encryptSecret', () => {
@@ -63,7 +63,7 @@ describe('crypto utility', () => {
 
     it('should throw on invalid format (not three parts)', () => {
       expect(() => decryptSecret('not-encrypted')).toThrow(
-        'Decryption failed: value is not in encrypted format'
+        'Decryption failed: value is not in encrypted format',
       );
     });
 
@@ -72,7 +72,7 @@ describe('crypto utility', () => {
       const authTag = Buffer.alloc(16).toString('base64');
       const ciphertext = Buffer.alloc(16).toString('base64');
       expect(() => decryptSecret(`${badIv}:${authTag}:${ciphertext}`)).toThrow(
-        'Invalid encryption IV length'
+        'Invalid encryption IV length',
       );
     });
 

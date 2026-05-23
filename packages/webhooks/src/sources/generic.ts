@@ -1,5 +1,5 @@
 import { ulid } from 'ulid';
-import type { WebhookSource, NormalizedWebhookEvent, WebhookRequest } from '../types.js';
+import type { NormalizedWebhookEvent, WebhookRequest, WebhookSource } from '../types.js';
 import { HMACSignatureValidator } from '../validators/base.js';
 
 export class GenericWebhookSource implements WebhookSource {

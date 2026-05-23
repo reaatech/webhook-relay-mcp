@@ -1,9 +1,9 @@
-import crypto from 'crypto';
-import { defineTool, type ToolInputSchema } from '../types.js';
+import crypto from 'node:crypto';
+import { logger, pollSchema } from '@reaatech/webhook-relay-core';
 import { StorageService } from '@reaatech/webhook-relay-storage';
 import type { EventEntity } from '@reaatech/webhook-relay-storage';
 import { PollWaiterService, formatEvent } from '@reaatech/webhook-relay-storage';
-import { logger, pollSchema } from '@reaatech/webhook-relay-core';
+import { type ToolInputSchema, defineTool } from '../types.js';
 
 const inputSchema: ToolInputSchema = {
   type: 'object',
@@ -69,7 +69,7 @@ export const pollTool = defineTool(
         storage,
         filterTypes,
         subscription.filters,
-        effectiveLimit
+        effectiveLimit,
       );
 
       if (existingEvents.length > 0) {
@@ -86,7 +86,7 @@ export const pollTool = defineTool(
                   waited: false,
                 },
                 null,
-                2
+                2,
               ),
             },
           ],
@@ -98,7 +98,7 @@ export const pollTool = defineTool(
         filterTypes,
         subscription.filters,
         effectiveTimeout,
-        effectiveLimit
+        effectiveLimit,
       );
     } catch (error) {
       logger.error({ error, event: 'poll_error', subscriptionId }, 'Poll failed');
@@ -106,14 +106,14 @@ export const pollTool = defineTool(
         cause: error,
       });
     }
-  }
+  },
 );
 
 async function getMatchingEvents(
   storage: StorageService,
   eventTypes: string[],
   filters: Record<string, unknown> | undefined,
-  limit: number
+  limit: number,
 ): Promise<EventEntity[]> {
   const events = await storage.events.list({
     types: eventTypes,
@@ -142,7 +142,7 @@ function matchesFilters(event: EventEntity, filters: Record<string, unknown>): b
 async function markEventsDelivered(
   storage: StorageService,
   subscriptionId: string,
-  events: EventEntity[]
+  events: EventEntity[],
 ): Promise<void> {
   const eventIds = events.map((e) => e.id);
   await storage.subscriptions.markDelivered(subscriptionId, eventIds);
@@ -156,7 +156,7 @@ async function blockingPoll(
   eventTypes: string[],
   filters: Record<string, unknown> | undefined,
   timeout: number,
-  limit: number
+  limit: number,
 ): Promise<{ content: Array<{ type: string; text: string }> }> {
   const waiterId = crypto.randomUUID();
   const waiterService = PollWaiterService.getInstance();
@@ -176,7 +176,7 @@ async function blockingPoll(
                 timedOut: true,
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -203,7 +203,7 @@ async function blockingPoll(
                   timedOut: false,
                 },
                 null,
-                2
+                2,
               ),
             },
           ],

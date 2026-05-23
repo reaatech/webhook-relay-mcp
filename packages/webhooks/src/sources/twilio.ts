@@ -1,6 +1,6 @@
+import crypto from 'node:crypto';
 import { ulid } from 'ulid';
-import crypto from 'crypto';
-import type { WebhookSource, NormalizedWebhookEvent, WebhookRequest } from '../types.js';
+import type { NormalizedWebhookEvent, WebhookRequest, WebhookSource } from '../types.js';
 
 interface TwilioWebhookPayload {
   MessageSid?: string;
@@ -50,7 +50,7 @@ export class TwilioWebhookSource implements WebhookSource {
 
     return crypto.timingSafeEqual(
       Buffer.from(signature, 'base64'),
-      Buffer.from(expectedSignature, 'base64')
+      Buffer.from(expectedSignature, 'base64'),
     );
   }
 

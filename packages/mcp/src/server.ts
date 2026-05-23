@@ -24,7 +24,7 @@ export class MCPServer {
         capabilities: {
           tools: {},
         },
-      }
+      },
     );
 
     server.setRequestHandler(ListToolsRequestSchema, async () => ({
@@ -52,7 +52,7 @@ export class MCPServer {
             tool: name,
             error: error instanceof Error ? error.message : 'Unknown error',
           },
-          'MCP tool failed'
+          'MCP tool failed',
         );
         throw error;
       }

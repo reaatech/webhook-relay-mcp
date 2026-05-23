@@ -1,6 +1,6 @@
-import { defineTool, type ToolInputSchema } from '../types.js';
-import { StorageService } from '@reaatech/webhook-relay-storage';
 import { logger } from '@reaatech/webhook-relay-core';
+import { StorageService } from '@reaatech/webhook-relay-storage';
+import { type ToolInputSchema, defineTool } from '../types.js';
 
 const inputSchema: ToolInputSchema = {
   type: 'object',
@@ -89,7 +89,7 @@ export const historyTool = defineTool(
             JSON.stringify({
               t: lastEvent.timestamp,
               i: lastEvent.id,
-            })
+            }),
           ).toString('base64');
         }
       }
@@ -102,7 +102,7 @@ export const historyTool = defineTool(
           eventTypes,
           sources,
         },
-        'History query executed'
+        'History query executed',
       );
 
       return {
@@ -126,7 +126,7 @@ export const historyTool = defineTool(
                 count: pageEvents.length,
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -135,8 +135,8 @@ export const historyTool = defineTool(
       logger.error({ error, event: 'history_error' }, 'History query failed');
       throw new Error(
         `History query failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        { cause: error }
+        { cause: error },
       );
     }
-  }
+  },
 );

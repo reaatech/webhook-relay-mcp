@@ -1,6 +1,6 @@
+import crypto from 'node:crypto';
 import { ulid } from 'ulid';
-import crypto from 'crypto';
-import type { WebhookSource, NormalizedWebhookEvent, WebhookRequest } from '../types.js';
+import type { NormalizedWebhookEvent, WebhookRequest, WebhookSource } from '../types.js';
 
 interface ReplicateWebhookPayload {
   id: string;

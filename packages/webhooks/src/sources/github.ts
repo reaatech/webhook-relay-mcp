@@ -1,5 +1,5 @@
 import { ulid } from 'ulid';
-import type { WebhookSource, NormalizedWebhookEvent, WebhookRequest } from '../types.js';
+import type { NormalizedWebhookEvent, WebhookRequest, WebhookSource } from '../types.js';
 import { GitHubSignatureValidator } from '../validators/base.js';
 
 interface GitHubWebhookPayload {

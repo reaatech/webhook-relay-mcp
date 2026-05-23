@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import request from 'supertest';
-import crypto from 'crypto';
-import { createApp } from '../../src/server.js';
-import { StorageService } from '@reaatech/webhook-relay-storage';
+import crypto from 'node:crypto';
 import { encryptSecret } from '@reaatech/webhook-relay-core';
+import { StorageService } from '@reaatech/webhook-relay-storage';
+import request from 'supertest';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { createApp } from '../../src/server.js';
 
 const app = createApp();
 
@@ -161,7 +161,7 @@ describe('Webhook Verify Endpoint', () => {
 
   it('should respond to hub challenge', async () => {
     const res = await request(app).get(
-      '/webhooks/test/verify?hub.mode=subscribe&hub.challenge=abc123'
+      '/webhooks/test/verify?hub.mode=subscribe&hub.challenge=abc123',
     );
 
     expect(res.status).toBe(200);

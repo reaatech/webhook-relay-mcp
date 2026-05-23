@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest';
+import crypto from 'node:crypto';
 import { GenericWebhookSource } from '@reaatech/webhook-relay-webhooks';
 import type { WebhookRequest } from '@reaatech/webhook-relay-webhooks';
-import crypto from 'crypto';
+import { describe, expect, it } from 'vitest';
 
 describe('GenericWebhookSource', () => {
   const source = new GenericWebhookSource();
@@ -9,7 +9,7 @@ describe('GenericWebhookSource', () => {
   function createReq(
     body: Record<string, unknown>,
     headers: Record<string, string> = {},
-    rawBody?: Buffer
+    rawBody?: Buffer,
   ): WebhookRequest {
     return {
       body,
@@ -21,7 +21,7 @@ describe('GenericWebhookSource', () => {
   it('should reject request without signature header', async () => {
     const req = createReq({ event: 'test' });
     await expect(source.validateSignature(req, 'secret')).rejects.toThrow(
-      'Missing x-signature header'
+      'Missing x-signature header',
     );
   });
 
@@ -42,7 +42,7 @@ describe('GenericWebhookSource', () => {
     const req = createReq(
       body,
       { 'x-signature': signature, 'x-signature-algorithm': 'sha1' },
-      rawBody
+      rawBody,
     );
 
     const valid = await source.validateSignature(req, 'secret');

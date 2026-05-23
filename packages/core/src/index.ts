@@ -1,7 +1,8 @@
 export { config } from './config.js';
 export type { NormalizedEvent, NormalizationContext } from './types/events.js';
 export {
-  encryptSecret, decryptSecret
+  encryptSecret,
+  decryptSecret,
 } from './utils/crypto.js';
 export {
   WebhookRelayError,

@@ -1,8 +1,10 @@
-import { describe, it, expect } from 'vitest';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import { StripeWebhookSource } from '@reaatech/webhook-relay-webhooks';
-import paymentSucceededFixture from '../../fixtures/stripe/payment-succeeded.json' with { type: 'json' };
+import { describe, expect, it } from 'vitest';
 import paymentFailedFixture from '../../fixtures/stripe/payment-failed.json' with { type: 'json' };
+import paymentSucceededFixture from '../../fixtures/stripe/payment-succeeded.json' with {
+  type: 'json',
+};
 
 describe('StripeWebhookSource', () => {
   const source = new StripeWebhookSource();
@@ -51,7 +53,7 @@ describe('StripeWebhookSource', () => {
     it('should throw when signature header is missing', async () => {
       const req = createMockRequest({});
       await expect(source.validateSignature(req, secret)).rejects.toThrow(
-        'Missing Stripe-Signature header'
+        'Missing Stripe-Signature header',
       );
     });
   });

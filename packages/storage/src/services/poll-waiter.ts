@@ -1,6 +1,6 @@
 import { logger, matchEventType } from '@reaatech/webhook-relay-core';
-import type { EventEntity } from '../repositories/events.js';
 import type { StorageService } from '../index.js';
+import type { EventEntity } from '../repositories/events.js';
 
 interface PollWaiter {
   subscriptionId: string;
@@ -33,9 +33,7 @@ export class PollWaiterService {
 
   async notify(event: EventEntity, storage: StorageService): Promise<void> {
     for (const waiter of this.waiters.values()) {
-      const typeMatch = waiter.eventTypes.some((pattern) =>
-        matchEventType(pattern, event.type),
-      );
+      const typeMatch = waiter.eventTypes.some((pattern) => matchEventType(pattern, event.type));
       if (!typeMatch) {
         continue;
       }
@@ -61,13 +59,9 @@ export class PollWaiterService {
   }
 }
 
-function matchesFilters(
-  event: EventEntity,
-  filters: Record<string, unknown>,
-): boolean {
+function matchesFilters(event: EventEntity, filters: Record<string, unknown>): boolean {
   for (const [key, value] of Object.entries(filters)) {
-    const eventValue =
-      event.data[key] ?? event[key as keyof EventEntity];
+    const eventValue = event.data[key] ?? event[key as keyof EventEntity];
     if (eventValue !== value) {
       return false;
     }

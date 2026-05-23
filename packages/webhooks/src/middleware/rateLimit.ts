@@ -1,5 +1,5 @@
-import type { Request, Response, NextFunction } from 'express';
 import { logger } from '@reaatech/webhook-relay-core';
+import type { NextFunction, Request, Response } from 'express';
 
 interface RateLimitEntry {
   count: number;
@@ -44,7 +44,7 @@ export function rateLimit(options: RateLimitOptions) {
     if (entry.count > maxRequests) {
       logger.warn(
         { event: 'rate_limit_exceeded', key, count: entry.count, maxRequests },
-        'Rate limit exceeded'
+        'Rate limit exceeded',
       );
       res.status(429).json({
         error: 'Too many requests',

@@ -1,6 +1,6 @@
 import type Database from 'better-sqlite3';
-import { BaseRepository, type ListOptions } from './base.js';
 import { ulid } from 'ulid';
+import { BaseRepository, type ListOptions } from './base.js';
 
 export interface WebhookSourceEntity {
   id: string;
@@ -19,7 +19,7 @@ export class SourceRepository extends BaseRepository<WebhookSourceEntity> {
   }
 
   async create(
-    entity: Omit<WebhookSourceEntity, 'id' | 'createdAt'>
+    entity: Omit<WebhookSourceEntity, 'id' | 'createdAt'>,
   ): Promise<WebhookSourceEntity> {
     const id = ulid();
     const createdAt = new Date().toISOString();
@@ -37,7 +37,7 @@ export class SourceRepository extends BaseRepository<WebhookSourceEntity> {
       entity.signingSecret,
       entity.isActive ? 1 : 0,
       createdAt,
-      createdAt
+      createdAt,
     );
 
     return { ...entity, id, createdAt };
@@ -81,7 +81,7 @@ export class SourceRepository extends BaseRepository<WebhookSourceEntity> {
     const now = new Date().toISOString();
     const setClause = fieldsToUpdate.map((field) => `${this.fieldName(field)} = ?`).join(', ');
     const stmt = this.db.prepare(
-      `UPDATE webhook_sources SET ${setClause}, updated_at = ? WHERE id = ?`
+      `UPDATE webhook_sources SET ${setClause}, updated_at = ? WHERE id = ?`,
     );
 
     const values = fieldsToUpdate.map((field) => {

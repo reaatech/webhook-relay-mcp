@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import { GitHubWebhookSource } from '@reaatech/webhook-relay-webhooks';
+import { describe, expect, it } from 'vitest';
 import pushFixture from '../../fixtures/github/push.json' with { type: 'json' };
 import workflowRunFixture from '../../fixtures/github/workflow-run.json' with { type: 'json' };
 

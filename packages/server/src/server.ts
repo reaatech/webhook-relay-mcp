@@ -1,15 +1,15 @@
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import type { Server } from 'http';
-import express from 'express';
+import { readFileSync } from 'node:fs';
+import type { Server } from 'node:http';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { config } from '@reaatech/webhook-relay-core';
 import { logger } from '@reaatech/webhook-relay-core';
-import { rawBodyMiddleware } from './middleware/rawBody.js';
-import { webhookRouter } from '@reaatech/webhook-relay-webhooks';
-import { CleanupService } from '@reaatech/webhook-relay-storage';
 import { setupMcpHttpRoutes } from '@reaatech/webhook-relay-mcp';
+import { CleanupService } from '@reaatech/webhook-relay-storage';
 import { DatabaseService } from '@reaatech/webhook-relay-storage';
+import { webhookRouter } from '@reaatech/webhook-relay-webhooks';
+import express from 'express';
+import { rawBodyMiddleware } from './middleware/rawBody.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(join(__dirname, '..', '..', '..', 'package.json'), 'utf8'));
@@ -70,7 +70,7 @@ export function createApp(): express.Application {
     (err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
       logger.error({ error: err.message, stack: err.stack }, 'Unhandled error');
       res.status(500).json({ error: 'Internal server error' });
-    }
+    },
   );
 
   return app;
