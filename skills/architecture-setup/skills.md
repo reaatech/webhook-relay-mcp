@@ -7,9 +7,8 @@ This skill handles project initialization, dependency management, and core archi
 ## Capabilities
 
 - Initialize pnpm workspace with TypeScript configuration
-- Set up ESLint, Prettier, and EditorConfig for code quality
+- Set up Biome for linting and formatting
 - Configure Vitest for unit and integration testing
-- Set up Husky pre-commit hooks with lint-staged
 - Create GitHub Actions CI/CD pipeline
 - Configure package.json with all required dependencies
 - Set up directory structure per ARCHITECTURE.md
@@ -93,12 +92,11 @@ Create `tsconfig.json`:
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint src --ext .ts",
-    "lint:fix": "eslint src --ext .ts --fix",
-    "format": "prettier --write src/**/*.ts",
-    "format:check": "prettier --check src/**/*.ts",
-    "typecheck": "tsc --noEmit",
-    "prepare": "husky"
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": ["mcp", "webhook", "stripe", "github", "replicate"],
   "author": "reaatech",
@@ -126,90 +124,57 @@ pnpm add @modelcontextprotocol/sdk express better-sqlite3 zod pino uuid ulid raw
 # Dev dependencies
 pnpm add -D typescript @types/node @types/express @types/better-sqlite3 @types/uuid @types/ulid
 pnpm add -D vitest @vitest/coverage-v8
-pnpm add -D eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser
-pnpm add -D prettier
-pnpm add -D husky lint-staged
-pnpm add -D tsx
+pnpm add -D @biomejs/biome
+pnpm add -D tsup tsx
 ```
 
-### 5. Configure ESLint
+### 5. Configure Biome (Linting + Formatting)
 
-Create `.eslintrc.json`:
+Create `biome.json`:
 ```json
 {
-  "root": true,
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "ecmaVersion": 2022,
-    "sourceType": "module",
-    "project": "./tsconfig.json"
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "organizeImports": { "enabled": true },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "noNonNullAssertion": "error",
+        "useImportType": "error"
+      }
+    }
   },
-  "plugins": ["@typescript-eslint"],
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/strict"
-  ],
-  "rules": {
-    "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-    "no-console": ["warn", { "allow": ["error", "warn"] }],
-    "eqeqeq": ["error", "always"],
-    "curly": ["error", "all"]
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "lineEnding": "lf"
   },
-  "ignorePatterns": ["dist", "node_modules", "coverage"]
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "trailingCommas": "es5"
+    }
+  }
 }
 ```
 
-### 6. Configure Prettier
-
-Create `.prettierrc`:
+Add scripts to `package.json`:
 ```json
 {
-  "semi": true,
-  "trailingComma": "es5",
-  "singleQuote": true,
-  "printWidth": 100,
-  "tabWidth": 2,
-  "useTabs": false,
-  "bracketSpacing": true,
-  "arrowParens": "always"
+  "scripts": {
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "format:check": "biome format ."
+  }
 }
 ```
 
-Create `.prettierignore`:
-```
-dist
-node_modules
-coverage
-*.md
-```
-
-### 7. Configure EditorConfig
-
-Create `.editorconfig`:
-```ini
-root = true
-
-[*]
-charset = utf-8
-end_of_line = lf
-insert_final_newline = true
-trim_trailing_whitespace = true
-indent_style = space
-indent_size = 2
-
-[*.md]
-trim_trailing_whitespace = false
-
-[*.{json,yml,yaml}]
-indent_size = 2
-
-[Makefile]
-indent_style = tab
-```
-
-### 8. Configure Vitest
+### 6. Configure Vitest
 
 Create `vitest.config.ts`:
 ```typescript
@@ -217,105 +182,25 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    globals: true,
+    globals: false,
     environment: 'node',
-    include: ['tests/**/*.test.ts'],
+    include: ['src/**/*.test.ts', 'tests/**/*.test.ts'],
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules', 'dist', 'tests'],
+      reporter: ['text', 'json-summary'],
       thresholds: {
-        global: {
-          statements: 80,
-          branches: 75,
-          functions: 80,
-          lines: 80,
-        },
+        branches: 80,
+        functions: 80,
+        lines: 80,
+        statements: 80,
       },
     },
-    setupFiles: [],
-    mockReset: true,
-    clearMocks: true,
   },
 });
 ```
 
-### 9. Configure Husky & lint-staged
+### 7. Create GitHub Actions CI
 
-Create `.lintstagedrc.json`:
-```json
-{
-  "*.ts": [
-    "eslint --fix",
-    "prettier --write"
-  ],
-  "*.{json,md}": [
-    "prettier --write"
-  ]
-}
-```
-
-Initialize Husky:
-```bash
-pnpm exec husky init
-```
-
-Then create `.husky/pre-commit`:
-```bash
-pnpm exec lint-staged
-```
-
-### 10. Create GitHub Actions CI
-
-Create `.github/workflows/ci.yml`:
-```yaml
-name: CI
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x, 22.x]
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
-      
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      
-      - name: Lint
-        run: pnpm lint
-      
-      - name: Type check
-        run: pnpm typecheck
-      
-      - name: Format check
-        run: pnpm format:check
-      
-      - name: Test
-        run: pnpm test:coverage
-      
-      - name: Build
-        run: pnpm build
-```
+Create `.github/workflows/ci.yml` with separate jobs for install, audit, lint, typecheck, build, test, coverage, and docker-build. See the project's actual `ci.yml` for the full multi-job reference.
 
 ### 11. Create Environment Configuration
 
@@ -392,8 +277,6 @@ tmp/
 temp/
 *.tmp
 
-# Husky
-.husky/*.sh
 ```
 
 ## Examples

@@ -1,0 +1,60 @@
+{
+  "name": "@reaatech/webhook-relay-server",
+  "version": "0.1.0",
+  "description": "HTTP server and entry point for webhook-relay-mcp",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "author": "Rick Somers <rick@reaatech.com> (https://reaatech.com)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reaatech/webhook-relay-mcp.git",
+    "directory": "packages/server"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "webhook-relay-mcp": "./dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist"],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@reaatech/webhook-relay-core": "workspace:*",
+    "@reaatech/webhook-relay-storage": "workspace:*",
+    "@reaatech/webhook-relay-webhooks": "workspace:*",
+    "@reaatech/webhook-relay-mcp": "workspace:*",
+    "express": "^5.2.1",
+    "raw-body": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^25.6.2",
+    "@types/supertest": "^7.2.0",
+    "pino-pretty": "^13.0.0",
+    "supertest": "^7.2.2",
+    "tsup": "^8.4.0",
+    "tsx": "^4.21.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
+  }
+}
