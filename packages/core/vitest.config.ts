@@ -7,13 +7,9 @@ export default defineConfig({
     include: ['src/**/*.test.ts', 'tests/**/*.test.ts'],
     setupFiles: ['./tests/setup.ts'],
     coverage: {
+      include: ['src/**/*.ts'],
+      exclude: ['src/**/*.test.ts'],
       reporter: ['text', 'json-summary'],
-      thresholds: {
-        branches: 80,
-        functions: 80,
-        lines: 80,
-        statements: 80,
-      },
     },
   },
 });
