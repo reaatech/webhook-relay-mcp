@@ -5,7 +5,7 @@ vi.mock('../src/server.js', () => ({
   startHttpServer: vi.fn(),
 }));
 
-vi.mock('@reaatech/webhook-relay-mcp', () => ({
+vi.mock('@reaatech/webhook-relay-tools', () => ({
   startMCPServer: vi.fn(),
 }));
 
@@ -39,7 +39,7 @@ describe('index.ts catch block', () => {
         throw new Error('start failed');
       }),
     }));
-    vi.doMock('@reaatech/webhook-relay-mcp', () => ({
+    vi.doMock('@reaatech/webhook-relay-tools', () => ({
       startMCPServer: vi.fn(() => Promise.reject(new Error('mcp failed'))),
     }));
 

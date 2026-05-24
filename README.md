@@ -32,15 +32,15 @@ Requires **Node.js >= 20**. Building from source additionally requires **pnpm >=
 
 ### Install from npm
 
-The runnable entry point is **[`@reaatech/webhook-relay-server`](https://www.npmjs.com/package/@reaatech/webhook-relay-server)**,
+The runnable entry point is **[`@reaatech/webhook-relay-mcp`](https://www.npmjs.com/package/@reaatech/webhook-relay-mcp)**,
 which bundles the HTTP ingestion server, MCP transport, and dashboard:
 
 ```bash
 # Run directly with npx (no install)
-ENCRYPTION_KEY=$(openssl rand -hex 32) npx @reaatech/webhook-relay-server
+ENCRYPTION_KEY=$(openssl rand -hex 32) npx @reaatech/webhook-relay-mcp
 
 # Or install globally — exposes a `webhook-relay-mcp` binary
-npm install -g @reaatech/webhook-relay-server
+npm install -g @reaatech/webhook-relay-mcp
 ENCRYPTION_KEY=$(openssl rand -hex 32) webhook-relay-mcp
 ```
 
@@ -57,8 +57,8 @@ for HTTP/SSE. `ENCRYPTION_KEY` is required — see [Configuration](#configuratio
 
 | Package | Role |
 |---------|------|
-| [`@reaatech/webhook-relay-server`](https://www.npmjs.com/package/@reaatech/webhook-relay-server) | **Runnable server + CLI** (start here) |
-| [`@reaatech/webhook-relay-mcp`](https://www.npmjs.com/package/@reaatech/webhook-relay-mcp) | MCP server + 15 tools (library) |
+| [`@reaatech/webhook-relay-mcp`](https://www.npmjs.com/package/@reaatech/webhook-relay-mcp) | **Runnable server + CLI** (start here) |
+| [`@reaatech/webhook-relay-tools`](https://www.npmjs.com/package/@reaatech/webhook-relay-tools) | MCP server + 15 tools (library) |
 | [`@reaatech/webhook-relay-webhooks`](https://www.npmjs.com/package/@reaatech/webhook-relay-webhooks) | Sources, validators, ingestion (library) |
 | [`@reaatech/webhook-relay-storage`](https://www.npmjs.com/package/@reaatech/webhook-relay-storage) | SQLite storage + services (library) |
 | [`@reaatech/webhook-relay-core`](https://www.npmjs.com/package/@reaatech/webhook-relay-core) | Types, config, crypto, filters (library) |

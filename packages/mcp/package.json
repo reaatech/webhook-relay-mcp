@@ -1,5 +1,5 @@
 {
-  "name": "@reaatech/webhook-relay-mcp",
+  "name": "@reaatech/webhook-relay-tools",
   "version": "0.1.0",
   "description": "MCP server implementation for webhook-relay-mcp",
   "license": "MIT",

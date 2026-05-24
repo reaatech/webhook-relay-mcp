@@ -64,7 +64,7 @@ import {
   subscribeTool,
   unsubscribeTool,
   updateSourceTool,
-} from '@reaatech/webhook-relay-mcp';
+} from '@reaatech/webhook-relay-tools';
 
 describe('startMCPServer', () => {
   it('should create and start an MCP server', async () => {

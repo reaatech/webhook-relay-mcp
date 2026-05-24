@@ -5,7 +5,7 @@ vi.mock('../src/server.js', () => ({
   startHttpServer: vi.fn(),
 }));
 
-vi.mock('@reaatech/webhook-relay-mcp', () => ({
+vi.mock('@reaatech/webhook-relay-tools', () => ({
   startMCPServer: vi.fn(),
 }));
 

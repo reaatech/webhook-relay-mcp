@@ -43,13 +43,13 @@ importers:
         version: link:../packages/core
       '@reaatech/webhook-relay-mcp':
         specifier: workspace:*
-        version: link:../packages/mcp
-      '@reaatech/webhook-relay-server':
-        specifier: workspace:*
         version: link:../packages/server
       '@reaatech/webhook-relay-storage':
         specifier: workspace:*
         version: link:../packages/storage
+      '@reaatech/webhook-relay-tools':
+        specifier: workspace:*
+        version: link:../packages/mcp
       '@reaatech/webhook-relay-webhooks':
         specifier: workspace:*
         version: link:../packages/webhooks
@@ -122,12 +122,12 @@ importers:
       '@reaatech/webhook-relay-core':
         specifier: workspace:*
         version: link:../core
-      '@reaatech/webhook-relay-mcp':
-        specifier: workspace:*
-        version: link:../mcp
       '@reaatech/webhook-relay-storage':
         specifier: workspace:*
         version: link:../storage
+      '@reaatech/webhook-relay-tools':
+        specifier: workspace:*
+        version: link:../mcp
       '@reaatech/webhook-relay-webhooks':
         specifier: workspace:*
         version: link:../webhooks

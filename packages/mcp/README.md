@@ -1,4 +1,4 @@
-# @reaatech/webhook-relay-mcp
+# @reaatech/webhook-relay-tools
 
 The MCP (Model Context Protocol) server implementation and tool definitions for
 [webhook-relay-mcp](https://github.com/reaatech/webhook-relay-mcp).
@@ -6,12 +6,12 @@ The MCP (Model Context Protocol) server implementation and tool definitions for
 This package is a **library** that exposes the MCP server and its 15 tools. To run a
 ready-to-go server (HTTP ingestion + MCP transport + dashboard), install the bundled
 entry point instead:
-[`@reaatech/webhook-relay-server`](https://www.npmjs.com/package/@reaatech/webhook-relay-server).
+[`@reaatech/webhook-relay-mcp`](https://www.npmjs.com/package/@reaatech/webhook-relay-mcp).
 
 ## Install
 
 ```bash
-npm install @reaatech/webhook-relay-mcp
+npm install @reaatech/webhook-relay-tools
 ```
 
 ## What's inside

@@ -1,4 +1,4 @@
-# @reaatech/webhook-relay-server
+# @reaatech/webhook-relay-mcp
 
 The runnable entry point for [webhook-relay-mcp](https://github.com/reaatech/webhook-relay-mcp) —
 an MCP server that bridges third-party webhooks (Stripe, GitHub, Replicate, Twilio,
@@ -12,10 +12,10 @@ binary.
 
 ```bash
 # Run directly with npx (no install)
-ENCRYPTION_KEY=$(openssl rand -hex 32) npx @reaatech/webhook-relay-server
+ENCRYPTION_KEY=$(openssl rand -hex 32) npx @reaatech/webhook-relay-mcp
 
 # Or install globally
-npm install -g @reaatech/webhook-relay-server
+npm install -g @reaatech/webhook-relay-mcp
 ENCRYPTION_KEY=$(openssl rand -hex 32) webhook-relay-mcp
 ```
 

@@ -7,8 +7,8 @@
       "@reaatech/webhook-relay-core",
       "@reaatech/webhook-relay-storage",
       "@reaatech/webhook-relay-webhooks",
-      "@reaatech/webhook-relay-mcp",
-      "@reaatech/webhook-relay-server"
+      "@reaatech/webhook-relay-tools",
+      "@reaatech/webhook-relay-mcp"
     ]
   ],
   "linked": [],

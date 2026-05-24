@@ -23,8 +23,8 @@ export default defineConfig({
       '@reaatech/webhook-relay-core': path.resolve(__dirname, '../core/src/index.ts'),
       '@reaatech/webhook-relay-storage': path.resolve(__dirname, '../storage/src/index.ts'),
       '@reaatech/webhook-relay-webhooks': path.resolve(__dirname, '../webhooks/src/index.ts'),
-      '@reaatech/webhook-relay-mcp': path.resolve(__dirname, '../mcp/src/index.ts'),
-      '@reaatech/webhook-relay-server': path.resolve(__dirname, '../server/src/index.ts'),
+      '@reaatech/webhook-relay-tools': path.resolve(__dirname, '../mcp/src/index.ts'),
+      '@reaatech/webhook-relay-mcp': path.resolve(__dirname, '../server/src/index.ts'),
     },
   },
 });
