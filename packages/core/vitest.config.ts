@@ -10,6 +10,12 @@ export default defineConfig({
     coverage: {
       provider: 'istanbul',
       reporter: ['text', 'json-summary'],
+      thresholds: {
+        lines: 98,
+        statements: 98,
+        functions: 98,
+        branches: 95,
+      },
     },
   },
   resolve: {
