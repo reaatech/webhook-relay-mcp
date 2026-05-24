@@ -34,14 +34,35 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: pnpm install --frozen-lockfile
 
-      # Opens/updates a "Version Packages" PR when changesets are pending, or
-      # publishes to npm when that PR is merged (no pending changesets remain).
-      - name: Create Release PR or Publish
+      # Opens/updates a "Version Packages" PR when changesets are pending.
+      # Publishing to npm is handled by the separate step below, which runs
+      # only when the merge commit originates from a Version Packages PR.
+      - name: Create Release PR
         uses: changesets/action@v1
         with:
           version: pnpm version-packages
-          publish: pnpm release
           commit: 'chore: version packages'
           title: 'chore: version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Only publish when the last commit is from a merged Version Packages
+      # PR (commit message matches the changesets action title). This avoids
+      # attempting to publish on every push to main, which would fail when
+      # packages haven't yet been published to the npm registry.
+      - name: Check if publish is needed
+        id: check-publish
+        run: |
+          LAST_MSG=$(git log --format=%s -1)
+          if [[ "$LAST_MSG" == "chore: version packages"* ]]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish to npm
+        if: steps.check-publish.outputs.publish == 'true'
+        run: pnpm release
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
