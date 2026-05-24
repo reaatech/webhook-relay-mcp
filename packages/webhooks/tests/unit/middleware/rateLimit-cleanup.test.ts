@@ -1,9 +1,12 @@
 import type { NextFunction, Request, Response } from 'express';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
-let rateLimit: (opts: { windowMs: number; maxRequests: number }) => import(
-  'express',
-).RequestHandler;
+type RateLimitMiddleware = (opts: {
+  windowMs: number;
+  maxRequests: number;
+}) => import('express').RequestHandler;
+
+let rateLimit: RateLimitMiddleware;
 
 beforeAll(async () => {
   vi.useFakeTimers();
