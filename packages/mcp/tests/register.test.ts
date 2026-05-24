@@ -76,4 +76,14 @@ describe('webhooks.register tool', () => {
       expect(parsed.sourceType).toBe(sourceType);
     }
   });
+
+  it('should reject invalid name format', async () => {
+    await expect(
+      registerTool.execute({
+        name: 'UPPERCASE_INVALID',
+        sourceType: 'stripe',
+        signingSecret: 'whsec_test_secret_long_enough',
+      }),
+    ).rejects.toThrow();
+  });
 });

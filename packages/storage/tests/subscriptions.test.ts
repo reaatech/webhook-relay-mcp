@@ -118,4 +118,33 @@ describe('SubscriptionRepository', () => {
     expect(found.length).toBe(1);
     expect(found[0]?.isActive).toBe(true);
   });
+
+  it('should list with offset', async () => {
+    const storage = StorageService.getInstance();
+    for (let i = 0; i < 5; i++) {
+      await createSub({ eventTypes: [`type.${i}`] });
+    }
+
+    const page = await storage.subscriptions.list({ limit: 2, offset: 2 });
+    expect(page.length).toBe(2);
+  });
+
+  it('should mark events as delivered', async () => {
+    const storage = StorageService.getInstance();
+    const sub = await createSub();
+
+    const db = DatabaseService.getInstance().getDatabase();
+    const now = new Date().toISOString();
+    db.prepare(`
+      INSERT INTO events (id, type, source, source_type, source_id, timestamp, received_at, data, raw_payload, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run('evt-mark-1', 'test.event', 'test', 'generic', 'src-1', now, now, '{}', '{}', now);
+
+    await storage.subscriptions.markDelivered(sub.id, ['evt-mark-1']);
+
+    const rows = db.prepare('SELECT * FROM subscription_events').all() as Record<string, unknown>[];
+    expect(rows.length).toBe(1);
+    expect(rows[0]?.subscription_id).toBe(sub.id);
+    expect(rows[0]?.event_id).toBe('evt-mark-1');
+  });
 });

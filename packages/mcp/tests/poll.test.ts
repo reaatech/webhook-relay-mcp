@@ -1,5 +1,9 @@
 import { pollTool } from '@reaatech/webhook-relay-mcp';
-import { DatabaseService, StorageService } from '@reaatech/webhook-relay-storage';
+import {
+  DatabaseService,
+  PollWaiterService,
+  StorageService,
+} from '@reaatech/webhook-relay-storage';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('webhooks.poll tool', () => {
@@ -135,5 +139,82 @@ describe('webhooks.poll tool', () => {
     const parsed = JSON.parse(result.content[0]?.text ?? '{}');
     expect(parsed.events.length).toBe(2);
     expect(parsed.hasMore).toBe(true);
+  });
+
+  it('should reject invalid poll parameters', async () => {
+    await expect(pollTool.execute({ subscriptionId: 'valid', timeout: -1 })).rejects.toThrow();
+  });
+
+  it('should filter events with subscription filters', async () => {
+    const storage = StorageService.getInstance();
+    const sub = await storage.subscriptions.create({
+      eventTypes: ['test.event'],
+      isActive: true,
+      filters: { $eq: { source: 'stripe' } },
+    });
+
+    await storage.events.create({
+      type: 'test.event',
+      source: 'github',
+      sourceType: 'github',
+      sourceId: 'src-2',
+      webhookId: null,
+      timestamp: new Date().toISOString(),
+      receivedAt: new Date().toISOString(),
+      data: {},
+      rawPayload: {},
+      processed: false,
+    });
+
+    await storage.events.create({
+      type: 'test.event',
+      source: 'stripe',
+      sourceType: 'stripe',
+      sourceId: 'src-1',
+      webhookId: null,
+      timestamp: new Date(Date.now() - 1000).toISOString(),
+      receivedAt: new Date().toISOString(),
+      data: {},
+      rawPayload: {},
+      processed: false,
+    });
+
+    const result = await pollTool.execute({ subscriptionId: sub.id, timeout: 1 });
+    const parsed = JSON.parse(result.content[0]?.text ?? '{}');
+    expect(parsed.events.length).toBe(1);
+    expect(parsed.events[0]?.source).toBe('stripe');
+  });
+
+  it('should resolve blocking poll when event arrives via notify', async () => {
+    const storage = StorageService.getInstance();
+    const sub = await storage.subscriptions.create({
+      eventTypes: ['test.event'],
+      isActive: true,
+    });
+
+    const pollPromise = pollTool.execute({ subscriptionId: sub.id, timeout: 5 });
+
+    await new Promise((r) => setTimeout(r, 200));
+
+    const event = await storage.events.create({
+      type: 'test.event',
+      source: 'test',
+      sourceType: 'generic',
+      sourceId: 'src-1',
+      webhookId: null,
+      timestamp: new Date().toISOString(),
+      receivedAt: new Date().toISOString(),
+      data: {},
+      rawPayload: {},
+      processed: false,
+    });
+
+    await PollWaiterService.getInstance().notify(event, storage);
+
+    const result = await pollPromise;
+    const parsed = JSON.parse(result.content[0]?.text ?? '{}');
+    expect(parsed.events.length).toBe(1);
+    expect(parsed.waited).toBe(true);
+    expect(parsed.timedOut).toBe(false);
   });
 });

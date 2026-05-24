@@ -106,4 +106,22 @@ describe('CleanupService', () => {
     expect(result.deletedEvents).toBe(0);
     expect(result.deletedSubscriptionEvents).toBe(0);
   });
+
+  it('start should not throw', () => {
+    const cleanup = new CleanupService();
+    expect(() => cleanup.start()).not.toThrow();
+    cleanup.stop();
+  });
+
+  it('start twice should not create duplicate intervals', () => {
+    const cleanup = new CleanupService();
+    cleanup.start();
+    cleanup.start(); // second start should be no-op
+    cleanup.stop();
+  });
+
+  it('stop should not throw when not started', () => {
+    const cleanup = new CleanupService();
+    expect(() => cleanup.stop()).not.toThrow();
+  });
 });

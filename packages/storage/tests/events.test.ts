@@ -150,4 +150,96 @@ describe('EventRepository', () => {
     expect(unprocessed.length).toBe(1);
     expect(unprocessed[0]?.processed).toBe(false);
   });
+
+  it('should find by webhook id', async () => {
+    const storage = StorageService.getInstance();
+    await createEvent({ source: 'stripe', webhookId: 'wh_123' });
+    await createEvent({ source: 'stripe', webhookId: 'wh_456' });
+
+    const found = await storage.events.findByWebhookId('stripe', 'wh_123');
+    expect(found).not.toBeNull();
+    expect(found?.webhookId).toBe('wh_123');
+  });
+
+  it('should return null for non-existent webhook id', async () => {
+    const storage = StorageService.getInstance();
+    const found = await storage.events.findByWebhookId('stripe', 'wh_none');
+    expect(found).toBeNull();
+  });
+
+  it('should find by delivery status', async () => {
+    const storage = StorageService.getInstance();
+    await createEvent({ deliveryStatus: 'pending' });
+    await createEvent({ deliveryStatus: 'delivered' });
+
+    const pending = await storage.events.findByDeliveryStatus('pending');
+    expect(pending.length).toBe(1);
+    expect(pending[0]?.deliveryStatus).toBe('pending');
+  });
+
+  it('should find retryable events', async () => {
+    const storage = StorageService.getInstance();
+    const now = new Date();
+    const past = new Date(now.getTime() - 3600 * 1000).toISOString();
+
+    await createEvent({
+      deliveryStatus: 'failed',
+      retryCount: 1,
+      nextRetryAt: past,
+    });
+    await createEvent({
+      deliveryStatus: 'pending',
+      retryCount: 0,
+      nextRetryAt: past,
+    });
+    await createEvent({
+      deliveryStatus: 'delivered',
+      retryCount: 0,
+    });
+
+    const retryable = await storage.events.findRetryable();
+    expect(retryable.length).toBe(2);
+  });
+
+  it('should update delivery status', async () => {
+    const storage = StorageService.getInstance();
+    const created = await createEvent({ deliveryStatus: 'pending' });
+
+    const updated = await storage.events.updateDeliveryStatus(
+      created.id,
+      'failed',
+      'Connection error',
+    );
+    expect(updated).toBe(true);
+
+    const found = await storage.events.findById(created.id);
+    expect(found?.deliveryStatus).toBe('failed');
+    expect(found?.lastError).toBe('Connection error');
+  });
+
+  it('should list with cursor pagination', async () => {
+    const storage = StorageService.getInstance();
+    await createEvent({ timestamp: '2024-01-02T00:00:00Z', type: 'a', source: 'src-a' });
+    await createEvent({ timestamp: '2024-01-01T00:00:00Z', type: 'b', source: 'src-b' });
+
+    const first = await storage.events.list({ orderBy: 'timestamp', order: 'DESC', limit: 1 });
+    expect(first.length).toBe(1);
+
+    const afterFirst = await storage.events.list({
+      cursorTimestamp: first[0]?.timestamp ?? '',
+      cursorId: first[0]?.id ?? '',
+      orderBy: 'timestamp',
+      order: 'DESC',
+    });
+    expect(afterFirst.length).toBe(1);
+  });
+
+  it('should fallback to default orderBy for invalid field', async () => {
+    const storage = StorageService.getInstance();
+    await createEvent({ timestamp: '2024-01-02T00:00:00Z' });
+    await createEvent({ timestamp: '2024-01-01T00:00:00Z' });
+
+    const result = await storage.events.list({ orderBy: 'invalid_field', order: 'ASC' });
+    expect(result.length).toBe(2);
+  });
 });

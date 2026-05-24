@@ -127,5 +127,14 @@ export {
   listTool,
   pollTool,
   historyTool,
+  statsTool,
+  replayTool,
+  updateSourceTool,
+  deleteSourceTool,
+  rotateSecretTool,
+  listSourcesTool,
+  auditLogTool,
+  sourceHealthTool,
+  eventTypesTool,
 } from './tools/index.js';
 export { defineTool, type ToolHandler, type ToolInputSchema } from './types.js';
