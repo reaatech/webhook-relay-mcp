@@ -1,4 +1,4 @@
-import { MCPServer, defineTool } from '@reaatech/webhook-relay-mcp';
+import { MCPServer, defineTool } from '@reaatech/webhook-relay-tools';
 import { describe, expect, it } from 'vitest';
 
 describe('MCPServer', () => {

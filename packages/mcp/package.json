@@ -1,5 +1,5 @@
 {
-  "name": "@reaatech/webhook-relay-mcp",
+  "name": "@reaatech/webhook-relay-tools",
   "version": "0.1.0",
   "description": "MCP server implementation for webhook-relay-mcp",
   "license": "MIT",
@@ -23,7 +23,7 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist"],
+  "files": ["dist", "README.md", "LICENSE"],
   "publishConfig": {
     "access": "public"
   },
@@ -36,7 +36,7 @@
   "dependencies": {
     "@reaatech/webhook-relay-core": "workspace:*",
     "@reaatech/webhook-relay-storage": "workspace:*",
-    "@modelcontextprotocol/sdk": "^1.0.4"
+    "@modelcontextprotocol/sdk": "^1.29.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",

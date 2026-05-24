@@ -1,5 +1,5 @@
-import { replayTool } from '@reaatech/webhook-relay-mcp';
 import { DatabaseService, StorageService } from '@reaatech/webhook-relay-storage';
+import { replayTool } from '@reaatech/webhook-relay-tools';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('webhooks.replay tool', () => {

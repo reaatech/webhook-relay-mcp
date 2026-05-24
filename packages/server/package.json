@@ -1,5 +1,5 @@
 {
-  "name": "@reaatech/webhook-relay-server",
+  "name": "@reaatech/webhook-relay-mcp",
   "version": "0.1.0",
   "description": "HTTP server and entry point for webhook-relay-mcp",
   "license": "MIT",
@@ -26,7 +26,7 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist"],
+  "files": ["dist", "README.md", "LICENSE"],
   "publishConfig": {
     "access": "public"
   },
@@ -42,7 +42,7 @@
     "@reaatech/webhook-relay-core": "workspace:*",
     "@reaatech/webhook-relay-storage": "workspace:*",
     "@reaatech/webhook-relay-webhooks": "workspace:*",
-    "@reaatech/webhook-relay-mcp": "workspace:*",
+    "@reaatech/webhook-relay-tools": "workspace:*",
     "express": "^5.2.1",
     "raw-body": "^3.0.0"
   },

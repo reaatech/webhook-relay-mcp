@@ -1,4 +1,4 @@
-import { registerAllTools } from '@reaatech/webhook-relay-mcp';
+import { registerAllTools } from '@reaatech/webhook-relay-tools';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('registerAllTools', () => {

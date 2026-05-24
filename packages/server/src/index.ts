@@ -2,8 +2,8 @@
 
 import { logger } from '@reaatech/webhook-relay-core';
 import { config } from '@reaatech/webhook-relay-core';
-import { startMCPServer } from '@reaatech/webhook-relay-mcp';
 import { DatabaseService, StorageService } from '@reaatech/webhook-relay-storage';
+import { startMCPServer } from '@reaatech/webhook-relay-tools';
 import { startHttpServer } from './server.js';
 
 function handleShutdown(signal: string) {

@@ -8,7 +8,7 @@ vi.mock('@modelcontextprotocol/sdk/server/stdio.js', () => ({
   })),
 }));
 
-import { MCPServer, defineTool } from '@reaatech/webhook-relay-mcp';
+import { MCPServer, defineTool } from '@reaatech/webhook-relay-tools';
 
 describe('MCPServer extra', () => {
   it('should get server instance', () => {

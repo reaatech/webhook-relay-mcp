@@ -1,9 +1,9 @@
-import { pollTool } from '@reaatech/webhook-relay-mcp';
 import {
   DatabaseService,
   PollWaiterService,
   StorageService,
 } from '@reaatech/webhook-relay-storage';
+import { pollTool } from '@reaatech/webhook-relay-tools';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('webhooks.poll tool', () => {

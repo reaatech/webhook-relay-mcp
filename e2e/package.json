@@ -11,8 +11,8 @@
     "@reaatech/webhook-relay-core": "workspace:*",
     "@reaatech/webhook-relay-storage": "workspace:*",
     "@reaatech/webhook-relay-webhooks": "workspace:*",
-    "@reaatech/webhook-relay-mcp": "workspace:*",
-    "@reaatech/webhook-relay-server": "workspace:*"
+    "@reaatech/webhook-relay-tools": "workspace:*",
+    "@reaatech/webhook-relay-mcp": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.6.2",
