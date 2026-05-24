@@ -16,6 +16,10 @@ export interface EventEntity {
   rawPayload: unknown;
   metadata?: Record<string, unknown> | undefined;
   processed: boolean;
+  deliveryStatus?: 'pending' | 'processing' | 'delivered' | 'failed' | 'dead';
+  retryCount?: number;
+  lastError?: string;
+  nextRetryAt?: string;
   createdAt: string;
 }
 
@@ -26,6 +30,7 @@ export interface EventFilters {
   startTime?: string;
   endTime?: string;
   processed?: boolean;
+  deliveryStatus?: string;
   cursorTimestamp?: string;
   cursorId?: string;
 }
@@ -42,8 +47,9 @@ export class EventRepository extends BaseRepository<EventEntity> {
     const stmt = this.db.prepare(`
       INSERT INTO events (
         id, type, source, source_type, source_id, webhook_id, timestamp, received_at,
-        correlation_id, data, raw_payload, metadata, processed, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        correlation_id, data, raw_payload, metadata, processed, delivery_status,
+        retry_count, last_error, next_retry_at, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     stmt.run(
@@ -60,10 +66,21 @@ export class EventRepository extends BaseRepository<EventEntity> {
       this.toJSON(entity.rawPayload),
       entity.metadata ? this.toJSON(entity.metadata) : null,
       entity.processed ? 1 : 0,
+      entity.deliveryStatus ?? 'pending',
+      entity.retryCount ?? 0,
+      entity.lastError ?? null,
+      entity.nextRetryAt ?? null,
       createdAt,
     );
 
-    return { ...entity, id, createdAt, correlationId: entity.correlationId };
+    return {
+      ...entity,
+      id,
+      createdAt,
+      correlationId: entity.correlationId,
+      deliveryStatus: entity.deliveryStatus ?? 'pending',
+      retryCount: entity.retryCount ?? 0,
+    };
   }
 
   async findById(id: string): Promise<EventEntity | null> {
@@ -78,7 +95,7 @@ export class EventRepository extends BaseRepository<EventEntity> {
   }
 
   async update(id: string, updates: Partial<EventEntity>): Promise<boolean> {
-    const allowedFields = ['processed'];
+    const allowedFields = ['processed', 'deliveryStatus', 'retryCount', 'lastError', 'nextRetryAt'];
     const fieldsToUpdate = Object.keys(updates).filter((key) => allowedFields.includes(key));
 
     if (fieldsToUpdate.length === 0) {
@@ -90,7 +107,10 @@ export class EventRepository extends BaseRepository<EventEntity> {
 
     const values = fieldsToUpdate.map((field) => {
       const value = updates[field as keyof EventEntity];
-      return field === 'processed' ? (value ? 1 : 0) : value;
+      if (field === 'processed') {
+        return value ? 1 : 0;
+      }
+      return value ?? null;
     });
 
     const result = stmt.run(...values, id);
@@ -137,6 +157,11 @@ export class EventRepository extends BaseRepository<EventEntity> {
       params.push(options.processed ? 1 : 0);
     }
 
+    if (options?.deliveryStatus) {
+      query += ' AND delivery_status = ?';
+      params.push(options.deliveryStatus);
+    }
+
     if (options?.cursorTimestamp && options?.cursorId) {
       query += ' AND (timestamp < ? OR (timestamp = ? AND id < ?))';
       params.push(options.cursorTimestamp, options.cursorTimestamp, options.cursorId);
@@ -178,6 +203,31 @@ export class EventRepository extends BaseRepository<EventEntity> {
     return this.mapRowToEntity(row);
   }
 
+  async findByDeliveryStatus(status: string, limit = 100): Promise<EventEntity[]> {
+    return this.list({ deliveryStatus: status, limit, orderBy: 'timestamp', order: 'ASC' });
+  }
+
+  async findRetryable(): Promise<EventEntity[]> {
+    const now = new Date().toISOString();
+    const rows = this.db
+      .prepare(
+        `SELECT * FROM events
+         WHERE next_retry_at IS NOT NULL AND next_retry_at <= ?
+         AND delivery_status IN ('pending', 'failed')
+         ORDER BY next_retry_at ASC`,
+      )
+      .all(now) as Record<string, unknown>[];
+    return rows.map((row) => this.mapRowToEntity(row));
+  }
+
+  async updateDeliveryStatus(id: string, status: string, error?: string): Promise<boolean> {
+    const stmt = this.db.prepare(
+      'UPDATE events SET delivery_status = ?, last_error = ? WHERE id = ?',
+    );
+    const result = stmt.run(status, error ?? null, id);
+    return result.changes > 0;
+  }
+
   private fieldName(field: string): string {
     const mapping: Record<string, string> = {
       sourceType: 'source_type',
@@ -187,6 +237,10 @@ export class EventRepository extends BaseRepository<EventEntity> {
       processed: 'processed',
       createdAt: 'created_at',
       receivedAt: 'received_at',
+      deliveryStatus: 'delivery_status',
+      retryCount: 'retry_count',
+      lastError: 'last_error',
+      nextRetryAt: 'next_retry_at',
     };
     return mapping[field] ?? field;
   }
@@ -206,6 +260,10 @@ export class EventRepository extends BaseRepository<EventEntity> {
       rawPayload: this.parseJSON<unknown>(row.raw_payload as string),
       metadata: this.parseJSON<Record<string, unknown>>(row.metadata as string) ?? undefined,
       processed: (row.processed as number) === 1,
+      deliveryStatus: (row.delivery_status as EventEntity['deliveryStatus']) ?? 'pending',
+      retryCount: (row.retry_count as number) ?? 0,
+      lastError: (row.last_error as string) ?? undefined,
+      nextRetryAt: (row.next_retry_at as string) ?? undefined,
       createdAt: row.created_at as string,
     };
   }

@@ -3,38 +3,40 @@
 ## System Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                              webhook-relay-mcp                               │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌────────────┐ │
-│  │   External   │    │    HTTP      │    │     MCP      │    │    MCP     │ │
-│  │   Services   │───▶│  Webhook     │───▶│   Server     │◀──▶│   Clients  │ │
-│  │ (Stripe,     │    │  Ingestion   │    │  (Stdio/     │    │  (Agents)  │ │
-│  │  GitHub,     │    │  Endpoint    │    │   SSE)       │    │            │ │
-│  │  Replicate)  │    │              │    │              │    │            │ │
-│  └──────────────┘    └──────────────┘    └──────────────┘    └────────────┘ │
-│         │                    │                   │                           │
-│         │                    ▼                   │                           │
-│         │            ┌──────────────┐           │                           │
-│         │            │  Signature   │           │                           │
-│         │            │  Validator   │           │                           │
-│         │            └──────────────┘           │                           │
-│         │                    │                   │                           │
-│         │                    ▼                   │                           │
-│         │            ┌──────────────┐           │                           │
-│         │            │  Payload     │           │                           │
-│         │            │  Normalizer  │           │                           │
-│         │            └──────────────┘           │                           │
-│         │                    │                   │                           │
-│         │                    ▼                   │                           │
-│         │            ┌──────────────┐           │                           │
-│         │            │   SQLite     │◀──────────┘                           │
-│         │            │   Database   │                                       │
-│         │            └──────────────┘                                       │
-│         └───────────────────────────────────────────────────────────────────┘
-│                           (Webhook ingress only)                              │
-└─────────────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────────────┐
+│                                 webhook-relay-mcp                                       │
+├──────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                       │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐             │
+│  │   External   │  │    HTTP      │  │     MCP      │  │   Outbound   │             │
+│  │   Services   │─▶│  Webhook     │─▶│   Server     │─▶│   Delivery   │             │
+│  │ (Stripe,     │  │  Ingestion   │  │  (Stdio/     │  │   Engine     │             │
+│  │  GitHub,     │  │  Endpoint    │  │   SSE)       │  │  + Retry     │             │
+│  │  SendGrid,   │  │              │  │              │  │  + DLQ       │             │
+│  │  Slack,      │  └──────────────┘  └──────────────┘  └──────────────┘             │
+│  │  Vercel)     │         │                  │                                         │
+│  └──────────────┘         ▼                  ▼                                         │
+│                    ┌──────────────┐  ┌──────────────┐  ┌──────────────┐              │
+│                    │  Signature   │  │   Advanced   │  │   SQLite     │              │
+│                    │  Validator   │  │   Filter     │  │   Database   │              │
+│                    │  (HMAC-256,  │  │   DSL        │  │   (WAL)      │              │
+│                    │   SHA1, v0)  │  │ ($eq,$gt,    │  │              │              │
+│                    └──────────────┘  │  $in,$regex) │  └──────────────┘              │
+│                            │        └──────────────┘         │                       │
+│                            ▼                                 ▼                       │
+│                    ┌──────────────┐  ┌──────────────┐  ┌──────────────┐              │
+│                    │   Payload    │  │    Audit     │  │  Prometheus  │              │
+│                    │  Normalizer  │  │    Log       │  │   /metrics   │              │
+│                    └──────────────┘  └──────────────┘  └──────────────┘              │
+│                            │                                                          │
+│                            ▼                                                          │
+│                    ┌──────────────┐  ┌──────────────┐  ┌──────────────┐              │
+│                    │   Source     │  │    MCP       │  │   Admin      │              │
+│                    │   Health     │  │    Auth      │  │  Dashboard   │              │
+│                    │   Monitor    │  │  (API Key)   │  │     (/)      │              │
+│                    └──────────────┘  └──────────────┘  └──────────────┘              │
+│                                                                                       │
+└──────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -467,7 +469,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
           },
           sourceType: {
             type: 'string',
-            enum: ['stripe', 'github', 'replicate', 'twilio', 'generic'],
+            enum: ['stripe', 'github', 'replicate', 'twilio', 'sendgrid', 'slack', 'vercel', 'generic'],
             description: 'Type of webhook source',
           },
           signingSecret: {
@@ -931,29 +933,83 @@ Cleanup strategy: A background timer runs periodically, deleting events older th
 
 ---
 
+### Outbound Delivery Engine
+
+The DeliveryService handles forwarding events to external URLs with guaranteed delivery semantics:
+
+- **Delivery**: HTTP POST with HMAC-SHA256 signature header to configured destination URLs
+- **Retry**: Exponential backoff (`backoffMs * 2^(attempt-1)`) up to `DELIVERY_RETRY_MAX` attempts
+- **Dead Letter Queue**: Events exceeding max retries move to 'dead' status with error tracking
+- **Status tracking**: `delivery_status` field tracks each event through pending → processing → delivered/failed/dead
+
+### Audit Logging
+
+All MCP tool operations are persisted to the `audit_log` table:
+
+- **Fields**: actor, action, resource_type, resource_id, details (JSON), created_at
+- **Queryable**: via `webhooks.audit-log` tool with filters by actor, action, resource type, and date range
+- **Performance**: Indexed on actor, action, created_at, and resource_type+resource_id
+
+### Advanced Filter DSL
+
+Subscriptions support a JSON-based filter DSL with 13 operators:
+
+```json
+{
+  "$and": [
+    { "$eq": { "source": "stripe" } },
+    { "$gt": { "data.amount": 5000 } },
+    { "$or": [
+      { "$eq": { "type": "payment.completed" } },
+      { "$in": { "data.currency": ["usd", "eur"] } }
+    ]}
+  ]
+}
+```
+
+Operators: `$eq`, `$neq`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, `$nin`, `$regex`, `$exists`, `$and`, `$or`, `$not`
+
+Nested field access uses dot-notation (e.g., `data.customer.email`).
+
+### Source Health Monitoring
+
+Each webhook source tracks its last event timestamp. The `webhooks.source-health` tool reports:
+
+- **isHealthy**: true if last event within `SOURCE_HEARTBEAT_MINUTES` window
+- **minutesSinceLastEvent**: time elapsed since last webhook received
+- **Alerting**: Sources with no events beyond the heartbeat window indicate potential misconfiguration
+
+---
+
 ## Deployment Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                         Production                               │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │
-│  │   Load      │    │  webhook-   │    │   SQLite    │         │
-│  │  Balancer   │───▶│  relay-mcp  │───▶│  (WAL       │         │
-│  │             │    │  (xN)       │    │   Mode)     │         │
-│  └─────────────┘    └─────────────┘    └─────────────┘         │
-│         │                    │                                   │
-│         │                    │                                   │
-│         ▼                    ▼                                   │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │                    External Services                      │   │
-│  │  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐    │   │
-│  │  │ Stripe  │  │ GitHub  │  │Replicate│  │ Twilio  │    │   │
-│  │  └─────────┘  └─────────┘  └─────────┘  └─────────┘    │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────────────────────┐
+│                                 Production                                      │
+├───────────────────────────────────────────────────────────────────────────────┤
+│                                                                                │
+│  ┌─────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐ │
+│  │   Load      │    │  webhook-    │    │   SQLite     │    │  Delivery    │ │
+│  │  Balancer   │───▶│  relay-mcp   │───▶│  (WAL        │◀───│  Engine      │ │
+│  │             │    │  (xN)        │    │   Mode)      │    │  (Background)│ │
+│  └─────────────┘    └──────────────┘    └──────────────┘    └──────────────┘ │
+│         │                    │                  │                    │         │
+│         │                    │                  │                    │         │
+│         ▼                    ▼                  ▼                    ▼         │
+│  ┌──────────────────────────────────────────────────────────────────────────┐│
+│  │  External Services                  │  Observability                      ││
+│  │  ┌─────────┐ ┌─────────┐ ┌───────┐ │  ┌──────────┐  ┌──────────┐        ││
+│  │  │ Stripe  │ │ GitHub  │ │Replic.│ │  │Prometheus│  │  Audit   │        ││
+│  │  └─────────┘ └─────────┘ └───────┘ │  │ /metrics │  │  Log     │        ││
+│  │  ┌─────────┐ ┌─────────┐ ┌───────┐ │  └──────────┘  └──────────┘        ││
+│  │  │SendGrid │ │ Slack   │ │Vercel │ │                                      ││
+│  │  └─────────┘ └─────────┘ └───────┘ │                                      ││
+│  │  ┌─────────┐                        │                                      ││
+│  │  │ Twilio  │                        │                                      ││
+│  │  └─────────┘                        │                                      ││
+│  └──────────────────────────────────────────────────────────────────────────┘│
+│                                                                                │
+└───────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Horizontal Scaling
@@ -962,6 +1018,7 @@ Cleanup strategy: A background timer runs periodically, deleting events older th
 - Shared SQLite database (network-attached storage)
 - Sticky sessions not required (stateless HTTP layer)
 - Polling coordination via database notifications
+- Delivery Engine runs as a background service within each instance, processing outbound deliveries with retry and dead-letter queue
 
 ---
 
@@ -969,33 +1026,24 @@ Cleanup strategy: A background timer runs periodically, deleting events older th
 
 ### Metrics (Prometheus Format)
 
+Prometheus metrics are exposed at the `GET /metrics` endpoint. No external libraries required — implemented using simple in-memory counters and gauges.
+
 | Metric | Type | Description |
 |--------|------|-------------|
-| `webhook_received_total` | Counter | Total webhooks received by source |
-| `webhook_validation_failed_total` | Counter | Failed signature validations |
-| `webhook_processing_duration_seconds` | Histogram | Time to process webhook |
-| `events_stored_total` | Counter | Total events stored |
-| `subscriptions_active` | Gauge | Active subscriptions |
-| `poll_requests_total` | Counter | Total poll requests |
-| `poll_wait_duration_seconds` | Histogram | Time spent waiting in poll |
-
-### Structured Logging (pino)
-
-```typescript
-logger.info({
-  event: 'webhook_received',
-  source: 'stripe',
-  eventType: 'invoice.payment_succeeded',
-  webhookId: 'wh_123',
-  processingTimeMs: 45,
-});
-```
+| `webhook_received_total` | Counter | Total webhooks received, labels: source |
+| `webhook_validation_failed_total` | Counter | Failed signature validations, labels: source |
+| `webhook_ingested_total` | Counter | Successfully ingested events, labels: event_type, source |
+| `webhook_delivery_total` | Counter | Outbound deliveries, labels: status |
+| `webhook_poll_total` | Counter | Total poll requests |
+| `webhook_subscription_active` | Gauge | Count of active subscriptions |
+| `webhook_events_pending` | Gauge | Events awaiting delivery |
 
 ### Health Checks
 
-- `GET /health` - Basic health check
-- `GET /health/ready` - Readiness probe (database connected)
-- `GET /health/live` - Liveness probe (server responsive)
+- `GET /health` - Basic health check with version
+- `GET /health/ready` - Readiness probe (server responsive)
+- `GET /metrics` - Prometheus metrics endpoint
+- `GET /` - Admin dashboard web UI
 
 ---
 

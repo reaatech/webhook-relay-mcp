@@ -5,6 +5,9 @@ import { BaseRepository, type ListOptions } from './base.js';
 
 export interface SubscriptionEntity {
   id: string;
+  name?: string;
+  description?: string;
+  labels?: Record<string, string>;
   eventTypes: string[];
   filters?: Record<string, unknown> | undefined;
   createdAt: string;
@@ -23,12 +26,15 @@ export class SubscriptionRepository extends BaseRepository<SubscriptionEntity> {
     const createdAt = new Date().toISOString();
 
     const stmt = this.db.prepare(`
-      INSERT INTO subscriptions (id, event_types, filters, created_at, expires_at, is_active, last_polled_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO subscriptions (id, name, description, labels, event_types, filters, created_at, expires_at, is_active, last_polled_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     stmt.run(
       id,
+      entity.name ?? null,
+      entity.description ?? null,
+      entity.labels ? this.toJSON(entity.labels) : null,
       this.toJSON(entity.eventTypes),
       entity.filters ? this.toJSON(entity.filters) : null,
       createdAt,
@@ -51,7 +57,15 @@ export class SubscriptionRepository extends BaseRepository<SubscriptionEntity> {
   }
 
   async update(id: string, updates: Partial<SubscriptionEntity>): Promise<boolean> {
-    const allowedFields = ['filters', 'expiresAt', 'isActive', 'lastPolledAt'];
+    const allowedFields = [
+      'name',
+      'description',
+      'labels',
+      'filters',
+      'expiresAt',
+      'isActive',
+      'lastPolledAt',
+    ];
     const fieldsToUpdate = Object.keys(updates).filter((key) => allowedFields.includes(key));
 
     if (fieldsToUpdate.length === 0) {
@@ -63,7 +77,7 @@ export class SubscriptionRepository extends BaseRepository<SubscriptionEntity> {
 
     const values = fieldsToUpdate.map((field) => {
       const value = updates[field as keyof SubscriptionEntity];
-      if (field === 'filters') {
+      if (field === 'filters' || field === 'labels') {
         return value ? this.toJSON(value) : null;
       }
       if (field === 'isActive') {
@@ -151,6 +165,9 @@ export class SubscriptionRepository extends BaseRepository<SubscriptionEntity> {
   private mapRowToEntity(row: Record<string, unknown>): SubscriptionEntity {
     return {
       id: row.id as string,
+      name: (row.name as string) ?? undefined,
+      description: (row.description as string) ?? undefined,
+      labels: this.parseJSON<Record<string, string>>(row.labels as string) ?? undefined,
       eventTypes: this.parseJSON<string[]>(row.event_types as string) ?? [],
       filters: this.parseJSON<Record<string, unknown>>(row.filters as string) ?? undefined,
       createdAt: row.created_at as string,
