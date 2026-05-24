@@ -128,7 +128,8 @@ git commit -m "docs: update API documentation"
 ```typescript
 // 1. Imports (grouped and sorted)
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import express from 'express';
+import { StorageService } from '@reaatech/webhook-relay-storage';
+import { logger, config } from '@reaatech/webhook-relay-core';
 
 // 2. Constants
 const PORT = 3000;
@@ -190,7 +191,7 @@ describe('StripeWebhookSource', () => {
 
 When adding support for a new webhook provider:
 
-1. **Create source handler** in `src/webhooks/sources/<provider>.ts`:
+1. **Create source handler** in `packages/webhooks/src/sources/<provider>.ts`:
    ```typescript
    export class NewProviderWebhookSource implements WebhookSource {
      readonly name = 'newprovider';
@@ -203,11 +204,15 @@ When adding support for a new webhook provider:
    }
    ```
 
-2. **Add signature validator** if needed in `src/webhooks/validators/`
+2. **Add signature validator** if needed in `packages/webhooks/src/validators/`
 
-3. **Register the source** in `src/webhooks/sources/index.ts`
+3. **Register the source**:
+   - Add to `packages/webhooks/src/sources/index.ts` in `webhookSources` map
+   - Re-export from `packages/webhooks/src/index.ts`
+   - Add source type to `packages/core/src/utils/validation.ts` registerSourceSchema enum
+   - Add source type to `packages/mcp/src/tools/register.ts` sourceType enum
 
-4. **Write comprehensive tests** in `tests/webhooks/sources/`
+4. **Write comprehensive tests** in `packages/webhooks/tests/unit/webhooks/`
 
 5. **Update documentation** with setup instructions
 
@@ -215,7 +220,7 @@ When adding support for a new webhook provider:
 
 When adding new MCP tools:
 
-1. **Define the tool** in `src/mcp/tools/<tool-name>.ts`:
+1. **Define the tool** in `packages/mcp/src/tools/<tool-name>.ts`:
    ```typescript
    export const myTool = defineTool(
      'webhooks.mytool',
@@ -234,9 +239,11 @@ When adding new MCP tools:
    );
    ```
 
-2. **Register the tool** in `src/mcp/tools/index.ts`
+2. **Register the tool** in `packages/mcp/src/tools/index.ts`
 
-3. **Write tests** in `tests/mcp/tools/`
+3. **Write tests** in `packages/mcp/tests/`
+
+4. **Add Zod schemas** to `packages/core/src/utils/validation.ts`
 
 ## Documentation
 
