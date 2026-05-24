@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](package.json)
-[![MCP SDK](https://img.shields.io/badge/MCP_SDK-^1.0.4-blue)](https://github.com/modelcontextprotocol/sdk)
+[![MCP SDK](https://img.shields.io/badge/MCP_SDK-^1.29.0-blue)](https://github.com/modelcontextprotocol/sdk)
 
 An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server that bridges third-party webhooks into agent workflows. Receives webhooks from Stripe, GitHub, Replicate, Twilio, SendGrid, Slack, Vercel, and generic sources, normalizes them into a consistent event format, and exposes them to MCP clients via subscription-based polling.
 
@@ -28,12 +28,42 @@ An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server that b
 
 ## Quick Start
 
-### Prerequisites
+Requires **Node.js >= 20**. Building from source additionally requires **pnpm >= 10**.
 
-- Node.js >= 20
-- pnpm >= 9
+### Install from npm
 
-### Installation
+The runnable entry point is **[`@reaatech/webhook-relay-server`](https://www.npmjs.com/package/@reaatech/webhook-relay-server)**,
+which bundles the HTTP ingestion server, MCP transport, and dashboard:
+
+```bash
+# Run directly with npx (no install)
+ENCRYPTION_KEY=$(openssl rand -hex 32) npx @reaatech/webhook-relay-server
+
+# Or install globally — exposes a `webhook-relay-mcp` binary
+npm install -g @reaatech/webhook-relay-server
+ENCRYPTION_KEY=$(openssl rand -hex 32) webhook-relay-mcp
+```
+
+It starts in MCP **stdio** mode by default (for local agents). Set `MCP_TRANSPORT=sse`
+for HTTP/SSE. `ENCRYPTION_KEY` is required — see [Configuration](#configuration).
+
+> **Native dependency:** the server transitively depends on
+> [`better-sqlite3`](https://github.com/WiseLibs/better-sqlite3), a native addon.
+> Installation downloads a prebuilt binary when one exists for your platform and Node
+> version; otherwise it compiles from source, which requires a C++ toolchain (e.g.
+> `build-essential` + `python3` on Linux, Xcode Command Line Tools on macOS).
+
+### Published packages
+
+| Package | Role |
+|---------|------|
+| [`@reaatech/webhook-relay-server`](https://www.npmjs.com/package/@reaatech/webhook-relay-server) | **Runnable server + CLI** (start here) |
+| [`@reaatech/webhook-relay-mcp`](https://www.npmjs.com/package/@reaatech/webhook-relay-mcp) | MCP server + 15 tools (library) |
+| [`@reaatech/webhook-relay-webhooks`](https://www.npmjs.com/package/@reaatech/webhook-relay-webhooks) | Sources, validators, ingestion (library) |
+| [`@reaatech/webhook-relay-storage`](https://www.npmjs.com/package/@reaatech/webhook-relay-storage) | SQLite storage + services (library) |
+| [`@reaatech/webhook-relay-core`](https://www.npmjs.com/package/@reaatech/webhook-relay-core) | Types, config, crypto, filters (library) |
+
+### From source (development)
 
 ```bash
 pnpm install

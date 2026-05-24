@@ -65,7 +65,16 @@ describe('webhooks.register tool', () => {
   });
 
   it('should support all source types', async () => {
-    const types = ['stripe', 'github', 'replicate', 'twilio', 'generic'];
+    const types = [
+      'stripe',
+      'github',
+      'replicate',
+      'twilio',
+      'sendgrid',
+      'slack',
+      'vercel',
+      'generic',
+    ];
     for (const sourceType of types) {
       const result = await registerTool.execute({
         name: `test-${sourceType}`,
