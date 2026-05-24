@@ -1,4 +1,4 @@
-import { logger, matchEventType } from '@reaatech/webhook-relay-core';
+import { evaluateFilter, logger, matchEventType } from '@reaatech/webhook-relay-core';
 import type { StorageService } from '../index.js';
 import type { EventEntity } from '../repositories/events.js';
 
@@ -60,13 +60,7 @@ export class PollWaiterService {
 }
 
 function matchesFilters(event: EventEntity, filters: Record<string, unknown>): boolean {
-  for (const [key, value] of Object.entries(filters)) {
-    const eventValue = event.data[key] ?? event[key as keyof EventEntity];
-    if (eventValue !== value) {
-      return false;
-    }
-  }
-  return true;
+  return evaluateFilter(filters, event as unknown as Record<string, unknown>);
 }
 
 async function getMatchingEvents(

@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 export const SCHEMA = `
   -- Registered webhook sources
@@ -85,5 +85,34 @@ export const MIGRATIONS: Record<number, string[]> = {
     `ALTER TABLE events ADD COLUMN webhook_id TEXT;
 CREATE INDEX IF NOT EXISTS idx_events_webhook_id ON events(source, webhook_id) WHERE webhook_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_subscription_events_dedup ON subscription_events(subscription_id, event_id);`,
+  ],
+  3: [
+    `ALTER TABLE events ADD COLUMN delivery_status TEXT DEFAULT 'pending';
+ALTER TABLE events ADD COLUMN retry_count INTEGER DEFAULT 0;
+ALTER TABLE events ADD COLUMN last_error TEXT;
+ALTER TABLE events ADD COLUMN next_retry_at TEXT;
+ALTER TABLE webhook_sources ADD COLUMN last_event_at TEXT;
+ALTER TABLE subscriptions ADD COLUMN name TEXT;
+ALTER TABLE subscriptions ADD COLUMN description TEXT;
+ALTER TABLE subscriptions ADD COLUMN labels TEXT;
+CREATE TABLE IF NOT EXISTS audit_log (
+  id TEXT PRIMARY KEY,
+  actor TEXT NOT NULL,
+  action TEXT NOT NULL,
+  resource_type TEXT NOT NULL,
+  resource_id TEXT NOT NULL,
+  details TEXT,
+  created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_audit_log_actor ON audit_log(actor);
+CREATE INDEX IF NOT EXISTS idx_audit_log_action ON audit_log(action);
+CREATE INDEX IF NOT EXISTS idx_audit_log_created ON audit_log(created_at DESC);
+ALTER TABLE subscription_events ADD COLUMN status TEXT DEFAULT 'delivered';
+ALTER TABLE subscription_events ADD COLUMN attempt_count INTEGER DEFAULT 1;
+ALTER TABLE subscription_events ADD COLUMN last_error TEXT;
+ALTER TABLE subscription_events ADD COLUMN next_retry_at TEXT;
+CREATE INDEX IF NOT EXISTS idx_events_delivery_status ON events(delivery_status);
+CREATE INDEX IF NOT EXISTS idx_events_next_retry ON events(next_retry_at) WHERE next_retry_at IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_audit_log_resource ON audit_log(resource_type, resource_id);`,
   ],
 };

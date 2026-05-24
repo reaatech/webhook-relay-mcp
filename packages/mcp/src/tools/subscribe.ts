@@ -12,7 +12,8 @@ const inputSchema: ToolInputSchema = {
     },
     filters: {
       type: 'object',
-      description: 'Additional filter conditions (e.g., { source: "stripe" })',
+      description:
+        'Filter DSL supporting operators: $eq, $neq, $gt, $gte, $lt, $lte, $in, $nin, $regex, $exists, $and, $or, $not. Supports dot-notation for nested fields (e.g., {"$gt": {"data.amount": 5000}}). Simple key-value filters also supported (e.g., {"source": "stripe"}).',
     },
     ttl: {
       type: 'number',

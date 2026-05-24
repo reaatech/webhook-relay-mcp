@@ -11,7 +11,7 @@ const inputSchema: ToolInputSchema = {
     },
     sourceType: {
       type: 'string',
-      enum: ['stripe', 'github', 'replicate', 'twilio', 'generic'],
+      enum: ['stripe', 'github', 'replicate', 'sendgrid', 'slack', 'twilio', 'vercel', 'generic'],
       description: 'Type of webhook source',
     },
     signingSecret: {

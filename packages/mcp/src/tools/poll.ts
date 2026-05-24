@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { logger, pollSchema } from '@reaatech/webhook-relay-core';
+import { evaluateFilter, logger, pollSchema } from '@reaatech/webhook-relay-core';
 import { StorageService } from '@reaatech/webhook-relay-storage';
 import type { EventEntity } from '@reaatech/webhook-relay-storage';
 import { PollWaiterService, formatEvent } from '@reaatech/webhook-relay-storage';
@@ -130,13 +130,7 @@ async function getMatchingEvents(
 }
 
 function matchesFilters(event: EventEntity, filters: Record<string, unknown>): boolean {
-  for (const [key, value] of Object.entries(filters)) {
-    const eventValue = event.data[key] ?? event[key as keyof EventEntity];
-    if (eventValue !== value) {
-      return false;
-    }
-  }
-  return true;
+  return evaluateFilter(filters, event as unknown as Record<string, unknown>);
 }
 
 async function markEventsDelivered(

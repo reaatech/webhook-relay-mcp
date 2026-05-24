@@ -9,6 +9,7 @@ export interface WebhookSourceEntity {
   endpointUrl: string;
   signingSecret: string;
   isActive: boolean;
+  lastEventAt?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -25,8 +26,8 @@ export class SourceRepository extends BaseRepository<WebhookSourceEntity> {
     const createdAt = new Date().toISOString();
 
     const stmt = this.db.prepare(`
-      INSERT INTO webhook_sources (id, name, source_type, endpoint_url, signing_secret, is_active, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO webhook_sources (id, name, source_type, endpoint_url, signing_secret, is_active, last_event_at, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     stmt.run(
@@ -36,6 +37,7 @@ export class SourceRepository extends BaseRepository<WebhookSourceEntity> {
       entity.endpointUrl,
       entity.signingSecret,
       entity.isActive ? 1 : 0,
+      entity.lastEventAt ?? null,
       createdAt,
       createdAt,
     );
@@ -71,7 +73,7 @@ export class SourceRepository extends BaseRepository<WebhookSourceEntity> {
   }
 
   async update(id: string, updates: Partial<WebhookSourceEntity>): Promise<boolean> {
-    const allowedFields = ['name', 'endpointUrl', 'signingSecret', 'isActive'];
+    const allowedFields = ['name', 'endpointUrl', 'signingSecret', 'isActive', 'lastEventAt'];
     const fieldsToUpdate = Object.keys(updates).filter((key) => allowedFields.includes(key));
 
     if (fieldsToUpdate.length === 0) {
@@ -119,6 +121,7 @@ export class SourceRepository extends BaseRepository<WebhookSourceEntity> {
       endpointUrl: 'endpoint_url',
       signingSecret: 'signing_secret',
       isActive: 'is_active',
+      lastEventAt: 'last_event_at',
       createdAt: 'created_at',
       updatedAt: 'updated_at',
     };
@@ -133,6 +136,7 @@ export class SourceRepository extends BaseRepository<WebhookSourceEntity> {
       endpointUrl: row.endpoint_url as string,
       signingSecret: row.signing_secret as string,
       isActive: (row.is_active as number) === 1,
+      lastEventAt: (row.last_event_at as string) ?? undefined,
       createdAt: row.created_at as string,
       updatedAt: row.updated_at as string,
     };

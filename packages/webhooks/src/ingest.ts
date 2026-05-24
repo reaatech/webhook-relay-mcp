@@ -3,8 +3,11 @@ import { config } from '@reaatech/webhook-relay-core';
 import { logger } from '@reaatech/webhook-relay-core';
 import { decryptSecret } from '@reaatech/webhook-relay-core';
 import { SignatureVerificationError } from '@reaatech/webhook-relay-core';
+import { incrementCounter } from '@reaatech/webhook-relay-core';
 import { StorageService } from '@reaatech/webhook-relay-storage';
 import { PollWaiterService } from '@reaatech/webhook-relay-storage';
+import { SourceHealthService } from '@reaatech/webhook-relay-storage';
+import { AuditService } from '@reaatech/webhook-relay-storage';
 import { type Response, Router } from 'express';
 import { rateLimit } from './middleware/rateLimit.js';
 import { getWebhookSource } from './sources/index.js';
@@ -22,6 +25,8 @@ router.use(
 router.post('/:name', async (req: WebhookRequest, res: Response) => {
   const name = req.params.name as string;
   const requestId = (req.headers['x-request-id'] as string | undefined) ?? crypto.randomUUID();
+
+  incrementCounter('webhook_received_total', { source: name });
 
   logger.info(
     {
@@ -60,6 +65,7 @@ router.post('/:name', async (req: WebhookRequest, res: Response) => {
         throw new SignatureVerificationError('Signature verification returned false');
       }
     } catch (error) {
+      incrementCounter('webhook_validation_failed_total', { source: name });
       logger.warn(
         {
           event: 'signature_validation_failed',
@@ -102,6 +108,20 @@ router.post('/:name', async (req: WebhookRequest, res: Response) => {
 
     const storedEvent = await storage.events.create(eventEntity);
     await PollWaiterService.getInstance().notify(storedEvent, storage);
+
+    SourceHealthService.getInstance()
+      .recordEvent(sourceConfig.name)
+      .catch((err) => {
+        logger.error({ err }, 'Failed to record source health event');
+      });
+
+    AuditService.getInstance()
+      .log('system', 'webhook_received', 'source', sourceConfig.name)
+      .catch((err) => {
+        logger.error({ err }, 'Failed to write audit log');
+      });
+
+    incrementCounter('webhook_ingested_total', { event_type: normalizedEvent.type, source: name });
 
     logger.info(
       {

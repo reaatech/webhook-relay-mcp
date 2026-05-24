@@ -4,14 +4,81 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     ports:
-      - '3000:3000'
+      - '${PORT:-3000}:3000'
+    env_file:
+      - ../.env
     environment:
       - NODE_ENV=production
-      - PORT=3000
+      - PORT=${PORT:-3000}
       - DATABASE_PATH=/app/data/webhook-relay.db
       - ENCRYPTION_KEY=${ENCRYPTION_KEY:-change-me-in-production}
+      - ADMIN_API_KEY=${ADMIN_API_KEY:-}
+      - MCP_API_KEY=${MCP_API_KEY:-}
+      - MCP_TRANSPORT=${MCP_TRANSPORT:-sse}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_FORMAT=${LOG_FORMAT:-json}
+      - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS:-60000}
+      - RATE_LIMIT_MAX_REQUESTS=${RATE_LIMIT_MAX_REQUESTS:-100}
+      - WEBHOOK_BASE_URL=${WEBHOOK_BASE_URL:-http://localhost:3000}
+      - EVENT_RETENTION_DAYS=${EVENT_RETENTION_DAYS:-30}
+      - METRICS_ENABLED=${METRICS_ENABLED:-true}
+      - DELIVERY_RETRY_MAX=${DELIVERY_RETRY_MAX:-5}
+      - DELIVERY_RETRY_BACKOFF_MS=${DELIVERY_RETRY_BACKOFF_MS:-1000}
+      - SOURCE_HEARTBEAT_MINUTES=${SOURCE_HEARTBEAT_MINUTES:-60}
     volumes:
-      - webhook-data:/data
+      - webhook-data:/app/data
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://localhost:3000/health || exit 1']
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    networks:
+      - webhook-relay-net
+
+  # Redis service for future multi-instance support (uncomment when needed)
+  # redis:
+  #   image: redis:7-alpine
+  #   restart: unless-stopped
+  #   command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+  #   volumes:
+  #     - redis-data:/data
+  #   healthcheck:
+  #     test: ['CMD', 'redis-cli', 'ping']
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '0.5'
+  #         memory: 256M
+  #   networks:
+  #     - webhook-relay-net
 
 volumes:
   webhook-data:
+  # redis-data:
+
+networks:
+  webhook-relay-net:
+    driver: bridge

@@ -14,6 +14,11 @@ const configSchema = z.object({
   adminApiKey: z.string().min(1).optional(),
   rateLimitWindowMs: z.coerce.number().default(60000),
   rateLimitMaxRequests: z.coerce.number().default(100),
+  mcpApiKey: z.string().optional(),
+  metricsEnabled: z.coerce.boolean().default(true),
+  deliveryRetryMax: z.coerce.number().default(5),
+  deliveryRetryBackoffMs: z.coerce.number().default(1000),
+  sourceHeartbeatMinutes: z.coerce.number().default(60),
 });
 
 const raw = {
@@ -30,6 +35,11 @@ const raw = {
   adminApiKey: process.env.ADMIN_API_KEY,
   rateLimitWindowMs: process.env.RATE_LIMIT_WINDOW_MS,
   rateLimitMaxRequests: process.env.RATE_LIMIT_MAX_REQUESTS,
+  mcpApiKey: process.env.MCP_API_KEY,
+  metricsEnabled: process.env.METRICS_ENABLED,
+  deliveryRetryMax: process.env.DELIVERY_RETRY_MAX,
+  deliveryRetryBackoffMs: process.env.DELIVERY_RETRY_BACKOFF_MS,
+  sourceHeartbeatMinutes: process.env.SOURCE_HEARTBEAT_MINUTES,
 };
 
 const parsed = configSchema.safeParse(raw);

@@ -75,3 +75,36 @@ export class GitHubSignatureValidator implements SignatureValidator {
     return safeTimingEqual(Buffer.from(signature), Buffer.from(expectedSignature));
   }
 }
+
+export class SlackSignatureValidator implements SignatureValidator {
+  private readonly tolerance = 300;
+
+  async validate(
+    payload: Buffer,
+    signature: string,
+    secret: string,
+    timestamp?: string,
+  ): Promise<boolean> {
+    if (!timestamp) {
+      throw new Error('Missing X-Slack-Request-Timestamp header');
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    if (Math.abs(now - Number.parseInt(timestamp, 10)) > this.tolerance) {
+      throw new Error('Webhook signature timestamp outside tolerance');
+    }
+
+    if (!signature.startsWith('v0=')) {
+      throw new Error('Invalid Slack signature format');
+    }
+
+    const providedSignature = signature.substring(3);
+    const baseString = `v0:${timestamp}:${payload.toString()}`;
+    const expectedSignature = crypto.createHmac('sha256', secret).update(baseString).digest('hex');
+
+    return safeTimingEqual(
+      Buffer.from(providedSignature, 'hex'),
+      Buffer.from(expectedSignature, 'hex'),
+    );
+  }
+}

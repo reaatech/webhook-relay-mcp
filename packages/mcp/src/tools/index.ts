@@ -1,10 +1,19 @@
 import type { MCPServer } from '../server.js';
+import { auditLogTool } from './audit-log.js';
+import { deleteSourceTool } from './delete-source.js';
+import { eventTypesTool } from './event-types.js';
 import { historyTool } from './history.js';
+import { listSourcesTool } from './list-sources.js';
 import { listTool } from './list.js';
 import { pollTool } from './poll.js';
 import { registerTool } from './register.js';
+import { replayTool } from './replay.js';
+import { rotateSecretTool } from './rotate-secret.js';
+import { sourceHealthTool } from './source-health.js';
+import { statsTool } from './stats.js';
 import { subscribeTool } from './subscribe.js';
 import { unsubscribeTool } from './unsubscribe.js';
+import { updateSourceTool } from './update-source.js';
 
 export function registerAllTools(server: MCPServer): void {
   server.registerTool(subscribeTool);
@@ -13,11 +22,29 @@ export function registerAllTools(server: MCPServer): void {
   server.registerTool(registerTool);
   server.registerTool(unsubscribeTool);
   server.registerTool(listTool);
+  server.registerTool(statsTool);
+  server.registerTool(replayTool);
+  server.registerTool(updateSourceTool);
+  server.registerTool(deleteSourceTool);
+  server.registerTool(rotateSecretTool);
+  server.registerTool(listSourcesTool);
+  server.registerTool(auditLogTool);
+  server.registerTool(sourceHealthTool);
+  server.registerTool(eventTypesTool);
 }
 
-export { subscribeTool } from './subscribe.js';
-export { pollTool } from './poll.js';
+export { auditLogTool } from './audit-log.js';
+export { deleteSourceTool } from './delete-source.js';
+export { eventTypesTool } from './event-types.js';
 export { historyTool } from './history.js';
-export { registerTool } from './register.js';
-export { unsubscribeTool } from './unsubscribe.js';
+export { listSourcesTool } from './list-sources.js';
 export { listTool } from './list.js';
+export { pollTool } from './poll.js';
+export { registerTool } from './register.js';
+export { replayTool } from './replay.js';
+export { rotateSecretTool } from './rotate-secret.js';
+export { sourceHealthTool } from './source-health.js';
+export { statsTool } from './stats.js';
+export { subscribeTool } from './subscribe.js';
+export { unsubscribeTool } from './unsubscribe.js';
+export { updateSourceTool } from './update-source.js';
