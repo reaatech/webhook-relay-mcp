@@ -131,14 +131,20 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
+      # Cache key is scoped per Node version: native modules (better-sqlite3)
+      # are compiled against a specific Node ABI, so a node_modules tree built
+      # for one version cannot be reused by another.
       - uses: actions/cache@v4
         with:
           path: |
             ~/.local/share/pnpm/store
             node_modules
             */*/node_modules
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-node${{ matrix.node-version }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
       - run: pnpm install --frozen-lockfile --prefer-offline
+      # Ensure the better-sqlite3 native binary matches this job's Node ABI,
+      # even if a cached node_modules was built against a different version.
+      - run: pnpm rebuild better-sqlite3
       - uses: actions/download-artifact@v4
         with:
           name: build-dist
