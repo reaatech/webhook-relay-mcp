@@ -4,6 +4,11 @@ import { config } from '../config.js';
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 12; // 96 bits for GCM
 
+// Derives a 32-byte AES key by hashing the configured key string. This assumes
+// ENCRYPTION_KEY is already high-entropy (e.g. `openssl rand -hex 32`), so a plain
+// SHA-256 is used rather than a salted, slow KDF (scrypt/PBKDF2) — those defend
+// low-entropy passphrases against brute force, which is not the threat model here.
+// If ENCRYPTION_KEY may be a human-chosen passphrase, switch to a salted KDF.
 function deriveKey(keyString: string): Buffer {
   return crypto.createHash('sha256').update(keyString).digest();
 }
