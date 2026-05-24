@@ -1,59 +1,26 @@
-# Dependencies
 node_modules/
-.pnp
-.pnp.js
-
-# Build
+.pnpm-store/
 dist/
 build/
-
-# Generated JS/DTS in source folders (from accidental tsc runs)
-src/**/*.js
-src/**/*.d.ts
-src/**/*.js.map
-src/**/*.d.ts.map
-tests/**/*.js
-tests/**/*.d.ts
-tests/**/*.js.map
-tests/**/*.d.ts.map
-
-# Database
-*.db
-*.db-journal
-data/
-
-# Environment
-.env
-.env.local
-.env.*.local
-
-# Logs
+*.tsbuildinfo
+packages/*/src/**/*.js
+packages/*/src/**/*.js.map
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.d.ts.map
 logs/
 *.log
 npm-debug.log*
 pnpm-debug.log*
-
-# Testing
-coverage/
-
-# IDE
-.claude/
-.idea/
+.env
+.env.local
+.env.*.local
 .vscode/
+.idea/
+.claude
 *.swp
 *.swo
-
-# OS
 .DS_Store
 Thumbs.db
-
-# Temp
-tmp/
-temp/
-*.tmp
-
-# Husky
-.husky/_
-
-# Development
-DEV_PLAN.md
+coverage/
+.turbo/
+data/

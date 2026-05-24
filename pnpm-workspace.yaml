@@ -1,0 +1,14 @@
+packages:
+  - 'packages/*'
+  - 'e2e'
+
+onlyBuiltDependencies:
+  - '@biomejs/biome'
+  - esbuild
+  - better-sqlite3
+
+overrides:
+  fast-uri: '>=3.1.2'
+  hono: '>=4.12.18'
+  ip-address: '>=10.1.1'
+  qs: '>=6.15.2'

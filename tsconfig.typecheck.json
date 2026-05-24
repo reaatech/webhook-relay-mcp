@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@reaatech/webhook-relay-core": ["./packages/core/src/index.ts"],
+      "@reaatech/webhook-relay-storage": ["./packages/storage/src/index.ts"],
+      "@reaatech/webhook-relay-webhooks": ["./packages/webhooks/src/index.ts"],
+      "@reaatech/webhook-relay-mcp": ["./packages/mcp/src/index.ts"],
+      "@reaatech/webhook-relay-server": ["./packages/server/src/index.ts"]
+    }
+  }
+}

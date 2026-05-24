@@ -1,0 +1,17 @@
+services:
+  webhook-relay:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_PATH=/app/data/webhook-relay.db
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-change-me-in-production}
+    volumes:
+      - webhook-data:/data
+
+volumes:
+  webhook-data:
