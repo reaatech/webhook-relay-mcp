@@ -145,7 +145,7 @@ jobs:
       # Ensure the better-sqlite3 native binary matches this job's Node ABI,
       # even if a cached node_modules was built against a different version.
       - run: pnpm rebuild better-sqlite3
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: build-dist
       - run: pnpm test
@@ -169,7 +169,7 @@ jobs:
             */*/node_modules
           key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
       - run: pnpm install --frozen-lockfile --prefer-offline
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: build-dist
       - run: pnpm test:coverage
