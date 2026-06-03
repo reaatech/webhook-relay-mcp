@@ -1,5 +1,4 @@
-import { config } from '@reaatech/webhook-relay-core';
-import { logger } from '@reaatech/webhook-relay-core';
+import { config, logger } from '@reaatech/webhook-relay-core';
 import { DatabaseService } from '../database.js';
 
 const DEFAULT_INTERVAL_MS = 60 * 60 * 1000; // 1 hour

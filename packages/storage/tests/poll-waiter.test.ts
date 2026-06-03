@@ -1,8 +1,8 @@
 import {
   DatabaseService,
+  formatEvent,
   PollWaiterService,
   StorageService,
-  formatEvent,
 } from '@reaatech/webhook-relay-storage';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 

@@ -28,11 +28,11 @@ export function registerWebhookSource(name: string, source: new () => WebhookSou
   webhookSources[name] = source;
 }
 
-export { StripeWebhookSource } from './stripe.js';
+export { GenericWebhookSource } from './generic.js';
 export { GitHubWebhookSource } from './github.js';
 export { ReplicateWebhookSource } from './replicate.js';
 export { SendGridWebhookSource } from './sendgrid.js';
 export { SlackWebhookSource } from './slack.js';
+export { StripeWebhookSource } from './stripe.js';
 export { TwilioWebhookSource } from './twilio.js';
 export { VercelWebhookSource } from './vercel.js';
-export { GenericWebhookSource } from './generic.js';

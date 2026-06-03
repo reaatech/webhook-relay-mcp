@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-import { logger } from '@reaatech/webhook-relay-core';
-import { config } from '@reaatech/webhook-relay-core';
+import { config, logger } from '@reaatech/webhook-relay-core';
 import { DatabaseService, StorageService } from '@reaatech/webhook-relay-storage';
 import { startMCPServer } from '@reaatech/webhook-relay-tools';
 import { startHttpServer } from './server.js';

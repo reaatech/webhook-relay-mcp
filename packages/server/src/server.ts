@@ -2,11 +2,14 @@ import { readFileSync } from 'node:fs';
 import type { Server } from 'node:http';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { config } from '@reaatech/webhook-relay-core';
-import { logger } from '@reaatech/webhook-relay-core';
-import { getMetricsText, registerMetric, setGauge } from '@reaatech/webhook-relay-core';
-import { CleanupService } from '@reaatech/webhook-relay-storage';
-import { DatabaseService } from '@reaatech/webhook-relay-storage';
+import {
+  config,
+  getMetricsText,
+  logger,
+  registerMetric,
+  setGauge,
+} from '@reaatech/webhook-relay-core';
+import { CleanupService, DatabaseService } from '@reaatech/webhook-relay-storage';
 import { setupMcpHttpRoutes } from '@reaatech/webhook-relay-tools';
 import { webhookRouter } from '@reaatech/webhook-relay-webhooks';
 import express from 'express';

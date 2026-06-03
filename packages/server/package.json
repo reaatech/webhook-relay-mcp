@@ -26,7 +26,11 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "publishConfig": {
     "access": "public"
   },
@@ -53,8 +57,8 @@
     "pino-pretty": "^13.0.0",
     "supertest": "^7.2.2",
     "tsup": "^8.4.0",
-    "tsx": "^4.21.1",
+    "tsx": "^4.22.4",
     "typescript": "^5.8.3",
-    "vitest": "^3.1.1"
+    "vitest": "^4.1.8"
   }
 }

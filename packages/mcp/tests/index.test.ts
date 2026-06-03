@@ -17,18 +17,22 @@ const { isInitializeRequest, mockStreamableHttp } = vi.hoisted(() => ({
 }));
 
 vi.mock('@modelcontextprotocol/sdk/server/index.js', () => ({
-  Server: vi.fn().mockImplementation(() => ({
-    setRequestHandler: vi.fn(),
-    connect: vi.fn().mockResolvedValue(undefined),
-  })),
+  Server: vi.fn().mockImplementation(function () {
+    return {
+      setRequestHandler: vi.fn(),
+      connect: vi.fn().mockResolvedValue(undefined),
+    };
+  }),
 }));
 
 vi.mock('@modelcontextprotocol/sdk/server/stdio.js', () => ({
-  StdioServerTransport: vi.fn().mockImplementation(() => ({
-    start: vi.fn().mockResolvedValue(undefined),
-    close: vi.fn().mockResolvedValue(undefined),
-    send: vi.fn().mockResolvedValue(undefined),
-  })),
+  StdioServerTransport: vi.fn().mockImplementation(function () {
+    return {
+      start: vi.fn().mockResolvedValue(undefined),
+      close: vi.fn().mockResolvedValue(undefined),
+      send: vi.fn().mockResolvedValue(undefined),
+    };
+  }),
 }));
 
 vi.mock('@modelcontextprotocol/sdk/server/streamableHttp.js', () => ({
@@ -44,7 +48,6 @@ vi.mock('@modelcontextprotocol/sdk/types.js', async (importOriginal) => {
 });
 
 import {
-  MCPServer,
   auditLogTool,
   defineTool,
   deleteSourceTool,
@@ -52,6 +55,7 @@ import {
   historyTool,
   listSourcesTool,
   listTool,
+  MCPServer,
   pollTool,
   registerAllTools,
   registerTool,

@@ -1,7 +1,7 @@
 import { logger } from '@reaatech/webhook-relay-core';
-import { DatabaseService, StorageService } from '@reaatech/webhook-relay-storage';
 import type { WebhookSourceEntity } from '@reaatech/webhook-relay-storage';
-import { type ToolInputSchema, defineTool } from '../types.js';
+import { DatabaseService, StorageService } from '@reaatech/webhook-relay-storage';
+import { defineTool, type ToolInputSchema } from '../types.js';
 
 const DEFAULT_HEARTBEAT_WINDOW_MS = 24 * 60 * 60 * 1000; // 24 hours
 

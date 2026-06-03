@@ -1,13 +1,17 @@
 import crypto from 'node:crypto';
-import { config } from '@reaatech/webhook-relay-core';
-import { logger } from '@reaatech/webhook-relay-core';
-import { decryptSecret } from '@reaatech/webhook-relay-core';
-import { SignatureVerificationError } from '@reaatech/webhook-relay-core';
-import { incrementCounter } from '@reaatech/webhook-relay-core';
-import { StorageService } from '@reaatech/webhook-relay-storage';
-import { PollWaiterService } from '@reaatech/webhook-relay-storage';
-import { SourceHealthService } from '@reaatech/webhook-relay-storage';
-import { AuditService } from '@reaatech/webhook-relay-storage';
+import {
+  config,
+  decryptSecret,
+  incrementCounter,
+  logger,
+  SignatureVerificationError,
+} from '@reaatech/webhook-relay-core';
+import {
+  AuditService,
+  PollWaiterService,
+  SourceHealthService,
+  StorageService,
+} from '@reaatech/webhook-relay-storage';
 import { type Response, Router } from 'express';
 import { rateLimit } from './middleware/rateLimit.js';
 import { getWebhookSource } from './sources/index.js';
@@ -42,7 +46,7 @@ router.post('/:name', async (req: WebhookRequest, res: Response) => {
     const storage = StorageService.getInstance();
     const sourceConfig = await storage.sources.findByName(name);
 
-    if (!sourceConfig || !sourceConfig.isActive) {
+    if (!sourceConfig?.isActive) {
       logger.warn({ event: 'source_not_configured', name }, 'Webhook source not configured');
       res.status(404).json({ error: 'Webhook source not configured' });
       return;

@@ -1,6 +1,6 @@
 import { logger } from '@reaatech/webhook-relay-core';
 import { DatabaseService } from '@reaatech/webhook-relay-storage';
-import { type ToolInputSchema, defineTool } from '../types.js';
+import { defineTool, type ToolInputSchema } from '../types.js';
 
 interface EventTypeRow {
   type: string;
