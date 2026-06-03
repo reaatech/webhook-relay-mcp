@@ -120,21 +120,21 @@ export function setupMcpHttpRoutes(app: Application): void {
 
 export { MCPServer } from './server.js';
 export {
-  registerAllTools,
-  registerTool,
-  subscribeTool,
-  unsubscribeTool,
+  auditLogTool,
+  deleteSourceTool,
+  eventTypesTool,
+  historyTool,
+  listSourcesTool,
   listTool,
   pollTool,
-  historyTool,
-  statsTool,
+  registerAllTools,
+  registerTool,
   replayTool,
-  updateSourceTool,
-  deleteSourceTool,
   rotateSecretTool,
-  listSourcesTool,
-  auditLogTool,
   sourceHealthTool,
-  eventTypesTool,
+  statsTool,
+  subscribeTool,
+  unsubscribeTool,
+  updateSourceTool,
 } from './tools/index.js';
 export { defineTool, type ToolHandler, type ToolInputSchema } from './types.js';

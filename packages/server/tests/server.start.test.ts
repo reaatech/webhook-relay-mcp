@@ -2,10 +2,12 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@reaatech/webhook-relay-storage', () => {
   return {
-    CleanupService: vi.fn().mockImplementation(() => ({
-      start: vi.fn(),
-      stop: vi.fn(),
-    })),
+    CleanupService: vi.fn().mockImplementation(function () {
+      return {
+        start: vi.fn(),
+        stop: vi.fn(),
+      };
+    }),
   };
 });
 

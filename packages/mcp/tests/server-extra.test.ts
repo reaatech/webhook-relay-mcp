@@ -1,14 +1,16 @@
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@modelcontextprotocol/sdk/server/stdio.js', () => ({
-  StdioServerTransport: vi.fn().mockImplementation(() => ({
-    start: vi.fn().mockResolvedValue(undefined),
-    close: vi.fn().mockResolvedValue(undefined),
-    send: vi.fn().mockResolvedValue(undefined),
-  })),
+  StdioServerTransport: vi.fn().mockImplementation(function () {
+    return {
+      start: vi.fn().mockResolvedValue(undefined),
+      close: vi.fn().mockResolvedValue(undefined),
+      send: vi.fn().mockResolvedValue(undefined),
+    };
+  }),
 }));
 
-import { MCPServer, defineTool } from '@reaatech/webhook-relay-tools';
+import { defineTool, MCPServer } from '@reaatech/webhook-relay-tools';
 
 describe('MCPServer extra', () => {
   it('should get server instance', () => {

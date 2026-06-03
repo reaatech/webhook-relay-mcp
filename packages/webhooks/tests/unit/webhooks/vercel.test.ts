@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
-import { VercelWebhookSource } from '@reaatech/webhook-relay-webhooks';
 import type { WebhookRequest } from '@reaatech/webhook-relay-webhooks';
+import { VercelWebhookSource } from '@reaatech/webhook-relay-webhooks';
 import { describe, expect, it } from 'vitest';
 
 describe('VercelWebhookSource', () => {

@@ -1,6 +1,6 @@
 import { config, encryptSecret, logger, registerSourceSchema } from '@reaatech/webhook-relay-core';
 import { StorageService } from '@reaatech/webhook-relay-storage';
-import { type ToolInputSchema, defineTool } from '../types.js';
+import { defineTool, type ToolInputSchema } from '../types.js';
 
 const inputSchema: ToolInputSchema = {
   type: 'object',

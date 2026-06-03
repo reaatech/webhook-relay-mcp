@@ -13,9 +13,7 @@ describe('config', () => {
   });
 
   it('should use default values when env vars are not set', async () => {
-    // biome-ignore lint/performance/noDelete:
     delete process.env.NODE_ENV;
-    // biome-ignore lint/performance/noDelete:
     delete process.env.DATABASE_PATH;
     process.env.ENCRYPTION_KEY = 'test-key';
 
@@ -106,7 +104,6 @@ describe('config', () => {
   it('should exit process on missing ENCRYPTION_KEY', async () => {
     const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
-    // biome-ignore lint/performance/noDelete:
     delete process.env.ENCRYPTION_KEY;
 
     await import('../src/config.js');

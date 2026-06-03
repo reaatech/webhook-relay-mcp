@@ -1,12 +1,12 @@
+import type { WebhookSource } from '@reaatech/webhook-relay-webhooks';
 import {
   GenericWebhookSource,
   GitHubWebhookSource,
-  ReplicateWebhookSource,
-  StripeWebhookSource,
   getWebhookSource,
+  ReplicateWebhookSource,
   registerWebhookSource,
+  StripeWebhookSource,
 } from '@reaatech/webhook-relay-webhooks';
-import type { WebhookSource } from '@reaatech/webhook-relay-webhooks';
 import { describe, expect, it } from 'vitest';
 
 describe('getWebhookSource', () => {

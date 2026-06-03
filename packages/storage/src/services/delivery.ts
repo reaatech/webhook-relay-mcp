@@ -1,7 +1,5 @@
 import crypto from 'node:crypto';
-import { config } from '@reaatech/webhook-relay-core';
-import { logger } from '@reaatech/webhook-relay-core';
-import { incrementCounter } from '@reaatech/webhook-relay-core';
+import { config, incrementCounter, logger } from '@reaatech/webhook-relay-core';
 import { DatabaseService } from '../database.js';
 import type { EventEntity } from '../repositories/events.js';
 

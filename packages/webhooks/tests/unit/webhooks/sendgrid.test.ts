@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
-import { SendGridWebhookSource } from '@reaatech/webhook-relay-webhooks';
 import type { WebhookRequest } from '@reaatech/webhook-relay-webhooks';
+import { SendGridWebhookSource } from '@reaatech/webhook-relay-webhooks';
 import { describe, expect, it } from 'vitest';
 
 describe('SendGridWebhookSource', () => {

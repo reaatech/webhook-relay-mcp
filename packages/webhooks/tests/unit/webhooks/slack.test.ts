@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
-import { SlackWebhookSource } from '@reaatech/webhook-relay-webhooks';
 import type { WebhookRequest } from '@reaatech/webhook-relay-webhooks';
+import { SlackWebhookSource } from '@reaatech/webhook-relay-webhooks';
 import { describe, expect, it } from 'vitest';
 
 describe('SlackWebhookSource', () => {

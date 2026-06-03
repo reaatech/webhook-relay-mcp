@@ -1,9 +1,8 @@
 import crypto from 'node:crypto';
 import { evaluateFilter, logger, pollSchema } from '@reaatech/webhook-relay-core';
-import { StorageService } from '@reaatech/webhook-relay-storage';
 import type { EventEntity } from '@reaatech/webhook-relay-storage';
-import { PollWaiterService, formatEvent } from '@reaatech/webhook-relay-storage';
-import { type ToolInputSchema, defineTool } from '../types.js';
+import { formatEvent, PollWaiterService, StorageService } from '@reaatech/webhook-relay-storage';
+import { defineTool, type ToolInputSchema } from '../types.js';
 
 const inputSchema: ToolInputSchema = {
   type: 'object',

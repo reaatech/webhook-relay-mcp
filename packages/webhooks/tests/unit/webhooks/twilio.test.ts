@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
-import { TwilioWebhookSource } from '@reaatech/webhook-relay-webhooks';
 import type { WebhookRequest } from '@reaatech/webhook-relay-webhooks';
+import { TwilioWebhookSource } from '@reaatech/webhook-relay-webhooks';
 import { describe, expect, it } from 'vitest';
 
 describe('TwilioWebhookSource', () => {
