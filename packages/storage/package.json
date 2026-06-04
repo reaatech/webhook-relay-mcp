@@ -1,6 +1,6 @@
 {
   "name": "@reaatech/webhook-relay-storage",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "SQLite storage and persistence for webhook-relay-mcp",
   "license": "MIT",
   "engines": {
