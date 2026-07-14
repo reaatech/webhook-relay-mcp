@@ -48,7 +48,7 @@
     "@reaatech/webhook-relay-webhooks": "workspace:*",
     "@reaatech/webhook-relay-tools": "workspace:*",
     "express": "^5.2.1",
-    "raw-body": "^3.0.0"
+    "raw-body": "^4.0.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
