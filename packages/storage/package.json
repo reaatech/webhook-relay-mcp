@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@reaatech/webhook-relay-core": "workspace:*",
-    "better-sqlite3": "^12.9.0",
+    "better-sqlite3": "^13.0.0",
     "ulid": "^3.0.2"
   },
   "devDependencies": {
