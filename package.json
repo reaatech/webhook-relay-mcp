@@ -44,11 +44,11 @@
   "homepage": "https://github.com/reaatech/webhook-relay-mcp#readme",
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
-    "@changesets/cli": "^2.31.0",
-    "@vitest/coverage-istanbul": "^4.1.8",
-    "@vitest/coverage-v8": "^4.1.8",
-    "turbo": "^2.9.16",
+    "@changesets/cli": "^2.31.1",
+    "@vitest/coverage-istanbul": "^4.1.10",
+    "@vitest/coverage-v8": "^4.1.10",
+    "turbo": "^2.9.18",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.10"
   }
 }
